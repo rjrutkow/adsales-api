@@ -217,6 +217,18 @@ process.env.GOPATH = __dirname;
 
 // Create a hfc chain object and deploy our chaincode
 var chain_setup = require('./utils/chain_setup');
+console.log('\n\nkeyValStoreDir')
+console.log(keyValStoreDir)
+console.log('\n\nusers')
+console.log(users)
+console.log('\n\npeerURLs')
+console.log(peerURLs)
+console.log('\n\ncaURL')
+console.log(caURL)
+console.log('\n\ncertificate')
+console.log(certificate)
+console.log('\n\ncertificate_path')
+console.log(certificate_path)
 chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, certificate_path,
     function (error, chain, chaincodeID) {
 
