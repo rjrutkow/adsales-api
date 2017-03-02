@@ -28,6 +28,11 @@ var setup = require('./setup');
 var cors = require('cors');
 var fs = require('fs');
 
+
+var cpChaincode = null;
+var url 		= require('url');
+var defaultDemoUser = "WebAppAdmin";
+
 // =====================================================================================================================
 // 												Express Setup
 // =====================================================================================================================
@@ -70,9 +75,271 @@ app.use(function (req, res, next) {
     next();
 });
 
+
+///////////
+// Set the home page for the Open Points app by sending an html file
+app.get('/', function(req, res) {
+
+	var filePath = path.join(__dirname, '/public/index.html');
+	var homeFile = fs.readFile(filePath);
+
+	fs.readFile(filePath, {encoding : 'utf-8'}, function(err, data) {
+
+		//if (!err) {
+
+			// Determine if running on Bluemix or as a local app
+			//var hostnameForHtml = "";
+			//if (process.env.VCAP_APPLICATION) {
+			//	var servicesObject 	= JSON.parse(process.env.VCAP_APPLICATION);
+			//	hostnameForHtml 	= servicesObject.application_uris[0];
+			//} else {
+			//	hostnameForHtml 	= "localhost:3000";
+			//}
+
+			// Pass the hostname and chaincode source to the html file
+			//data = data.replace('#HOSTNAME#', hostnameForHtml);
+
+			//console.log('parsed html file succeeded');
+			res.send(data);
+		//} else {
+		//	console.log(err);
+		//}
+
+	});
+});
+
+app.post('/queryPlaceOrders', function(req,res) {
+    console.log("In queryPlaceOrders!!");
+    var params = new Array();
+    params.push(req.body.agencyId);
+    params.push(req.body.broadcasterId);
+
+    cpChaincode.queryPlaceOrders(defaultDemoUser,params,function(e, data) {
+		cb_received_response(e, data, res);
+	});
+});
+
+app.post('/releaseInventory', function(req,res) {
+    console.log("In ReleaseInventory!!");
+    var data = JSON.stringify(req.body);
+    var params = new Array();
+    params.push("BroadcasterA");
+    for (var i = 0; i < req.body.adspotId.length; i++) {
+        var adspotData = {};
+        adspotData.lotId = req.body.lotId[i];
+        adspotData.adspotId = req.body.adspotId[i];
+        adspotData.inventoryDate = req.body.inventoryDate[i];
+        adspotData.programName = req.body.programName[i];
+        adspotData.seasonEpisode = req.body.seasonEpisode[i];
+        adspotData.genre = req.body.genre[i];
+        adspotData.dayPart = req.body.dayPart[i];
+        adspotData.targetGrp = req.body.targetGrp[i];
+        adspotData.targetDemographics = req.body.targetDemographics[i];
+        adspotData.initialCpm = req.body.initialCpm[i];
+        adspotData.bsrp = req.body.bsrp[i];
+        adspotData.numberOfSpots = req.body.numberOfSpots[i];
+        params.push(JSON.stringify(adspotData));
+        console.log("PARAMS: " + JSON.stringify(adspotData));
+    }
+    console.log(data);
+    cpChaincode.releaseInventory(defaultDemoUser,params,function(e, data) {
+		cb_received_response(e, data, res);
+	});
+     
+});
+
+// add coverage
+app.post('/addCoverage', function(req,res) {
+	console.log("addCoverage.....");
+		var requestJSON={};
+		var responseJSON={};
+		var dependents={};
+		var i;
+		requestJSON.CoverageName=req.body.CoverageName;
+		requestJSON.CoverageType=req.body.CoverageType;
+		requestJSON.CarrierID=req.body.CarrierID;
+		requestJSON.GroupNum=req.body.GroupNum;
+		requestJSON.PlanCode=req.body.PlanCode;
+		requestJSON.SubscriberID=req.body.SubscriberID;
+		requestJSON.SubscriberName=req.body.SubscriberName;
+		requestJSON.SubscriberDOB=req.body.SubscriberDOB;
+		requestJSON.IsPrimary=req.body.IsPrimary;
+		requestJSON.EndDate=req.body.EndDate;
+		requestJSON.StartDate=req.body.StartDate;
+		requestJSON.AnnualDeductible=req.body.AnnualDeductible;
+		requestJSON.AnnualBenefitMaximum=req.body.AnnualBenefitMaximum;
+		requestJSON.LifetimeBenefitMaximum=req.body.LifetimeBenefitMaximum;
+		requestJSON.PreventiveCare=req.body.PreventiveCare;
+		requestJSON.MinorRestorativeCare=req.body.MinorRestorativeCare;
+		requestJSON.MajorRestorativeCare=req.body.MajorRestorativeCare;
+		requestJSON.OrthodonticTreatment=req.body.OrthodonticTreatment;
+		requestJSON.OrthodonticLifetimeBenefitMaximum=req.body.OrthodonticLifetimeBenefitMaximum;
+		//requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
+		//requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumUseBal;
+		requestJSON.EmployerID=req.body.EmployerID;
+		requestJSON.Premium=req.body.Premium;
+			//	requestJSON.Dependents=req.body.Dependents;
+   cpChaincode.addCoverage(defaultDemoUser, [requestJSON.CoverageName,requestJSON.CoverageType,requestJSON.CarrierID,
+	requestJSON.GroupNum,requestJSON.PlanCode,requestJSON.SubscriberID,requestJSON.SubscriberName,requestJSON.SubscriberDOB,
+	requestJSON.IsPrimary,requestJSON.EndDate,requestJSON.StartDate,req.body.AnnualDeductible,req.body.AnnualBenefitMaximum,
+	req.body.LifetimeBenefitMaximum,req.body.PreventiveCare,req.body.MinorRestorativeCare,req.body.MajorRestorativeCare,
+	req.body.OrthodonticTreatment,req.body.OrthodonticLifetimeBenefitMaximum,
+	requestJSON.EmployerID,requestJSON.Premium],cb_invoked_api);
+
+	res.send("SUCCESS");
+});
+
+
+//Update coverage
+app.post('/updateCoverage', function(req,res) {
+	console.log("updateCoverage.....");
+		var requestJSON={};
+		//var responseJSON={};
+		requestJSON.SubscriberID=req.body.SubscriberID;
+		requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
+		requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumBal;
+		cpChaincode.updateCoverage(defaultDemoUser, [requestJSON.SubscriberID,requestJSON.AnnualDeductibleBal,requestJSON.AnnualBenefitMaximumBal], cb_invoked_api);
+		
+	 res.send("Success");
+});
+
+//////////////
+
+//get coverage for user
+app.get('/getCoverages', function(req, res) {
+
+	var subscriberID = url.parse(req.url, true).query.subscriberID;
+	console.log('subscriberID: ', subscriberID);
+	cpChaincode.getCoverages(defaultDemoUser,  subscriberID, function(e, data) {
+		cb_received_response(e, data, res);
+	});
+
+});
+
+
+// Get a single participant's account information
+app.get('/getBlockchainRecord', function(req, res) {
+
+	var recordKey = url.parse(req.url, true).query.recordKey;
+
+	console.log('recordKey: ', recordKey);
+
+	cpChaincode.getBlockchainRecord(defaultDemoUser, recordKey, function(e,data) {
+		cb_received_response(e, data, res);
+	});
+
+});
+
+
+// Get a single participant's account information
+app.get('/verifyEmployment', function(req, res) {
+
+	var subscriberId = url.parse(req.url, true).query.subscriberId;
+
+	console.log('subscriberId: ', subscriberId);
+
+	cpChaincode.verifyEmployment(defaultDemoUser,  subscriberId, function(e,data) {
+		cb_received_response(e, data, res);
+	});
+
+});
+
+
+// Get a single participant's account information
+app.get('/verifyCoverage', function(req, res) {
+
+	var subscriberId = url.parse(req.url, true).query.subscriberId;
+	var memberId = url.parse(req.url, true).query.memberId;
+
+	console.log('subscriberId: ', subscriberId);
+
+	cpChaincode.verifyCoverage(defaultDemoUser, subscriberId, memberId, function(e,data) {
+		cb_received_response(e, data, res);
+	});
+
+});
+
+
+// Get a single participant's transaction history
+app.get('/getEmployeeRecord', function(req, res) {
+
+	var employeeId = url.parse(req.url, true).query.employeeId;
+
+	console.log('employeeId: ', employeeId);
+
+	cpChaincode.getEmployeeRecord(defaultDemoUser, employeeId, function(e, data) {
+		cb_received_response(e, data, res);
+	});
+
+});
+
+
+
+
+// add coverage
+app.post('/addCoverage', function(req,res) {
+	console.log("addCoverage.....");
+	
+		var requestJSON={};
+
+		requestJSON.CoverageName=req.body.CoverageName;
+		requestJSON.CoverageType=req.body.CoverageType;
+		requestJSON.CarrierID=req.body.CarrierID;
+		requestJSON.GroupNum=req.body.GroupNum;
+		requestJSON.PlanCode=req.body.PlanCode;
+		requestJSON.SubscriberID=req.body.SubscriberID;
+		requestJSON.SubscriberName=req.body.SubscriberName;
+		requestJSON.SubscriberDOB=req.body.SubscriberDOB;
+		requestJSON.IsPrimary=req.body.IsPrimary;
+		requestJSON.EndDate=req.body.EndDate;
+		requestJSON.StartDate=req.body.StartDate;
+		requestJSON.AnnualDeductible=req.body.AnnualDeductible;
+		requestJSON.AnnualBenefitMaximum=req.body.AnnualBenefitMaximum;
+		requestJSON.LifetimeBenefitMaximum=req.body.LifetimeBenefitMaximum;
+		requestJSON.PreventiveCare=req.body.PreventiveCare;
+		requestJSON.MinorRestorativeCare=req.body.MinorRestorativeCare;
+		requestJSON.MajorRestorativeCare=req.body.MajorRestorativeCare;
+		requestJSON.OrthodonticTreatment=req.body.OrthodonticTreatment;
+		requestJSON.OrthodonticLifetimeBenefitMaximum=req.body.OrthodonticLifetimeBenefitMaximum;
+		//requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
+		//requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumUseBal;
+		requestJSON.EmployerID=req.body.EmployerID;
+		requestJSON.Premium=req.body.Premium;
+			//	requestJSON.Dependents=req.body.Dependents;
+   cpChaincode.addCoverage(defaultDemoUser, [requestJSON.CoverageName,requestJSON.CoverageType,requestJSON.CarrierID,
+	requestJSON.GroupNum,requestJSON.PlanCode,requestJSON.SubscriberID,requestJSON.SubscriberName,requestJSON.SubscriberDOB,
+	requestJSON.IsPrimary,requestJSON.EndDate,requestJSON.StartDate,req.body.AnnualDeductible,req.body.AnnualBenefitMaximum,
+	req.body.LifetimeBenefitMaximum,req.body.PreventiveCare,req.body.MinorRestorativeCare,req.body.MajorRestorativeCare,
+	req.body.OrthodonticTreatment,req.body.OrthodonticLifetimeBenefitMaximum,
+	requestJSON.EmployerID,requestJSON.Premium], cb_invoked_api);
+
+	res.send("SUCCESS");
+});
+
+
+
+
+function cb_received_response(e, data, res) {
+	if (e != null) {
+		console.log('Received this error when calling a chaincode function', e);
+	} else {
+		console.log(JSON.stringify(data));
+		if (res) {
+			res.send(data);
+		}
+
+	}
+}
+
+
+// Callback function for invoking a chaincode function
+function cb_invoked_api(e, a) {
+	console.log('response: ', e, a);
+}
+
 // This router will serve up our pages and API calls.
 var router = require('./routes/site_router');
-app.use('/', router);
+//app.use('/', router);
 
 // If the request is not process by this point, their are 2 possibilities:
 // 1. We don't have a route for handling the request
@@ -217,18 +484,6 @@ process.env.GOPATH = __dirname;
 
 // Create a hfc chain object and deploy our chaincode
 var chain_setup = require('./utils/chain_setup');
-console.log('\n\nkeyValStoreDir')
-console.log(keyValStoreDir)
-console.log('\n\nusers')
-console.log(users)
-console.log('\n\npeerURLs')
-console.log(peerURLs)
-console.log('\n\ncaURL')
-console.log(caURL)
-console.log('\n\ncertificate')
-console.log(certificate)
-console.log('\n\ncertificate_path')
-console.log(certificate_path)
 chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, certificate_path,
     function (error, chain, chaincodeID) {
 
@@ -241,13 +496,13 @@ chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, cert
         user_manager.setup(chain);
 
         // Operation involving chaincode in this app should use this object.
-        var cpChaincode = new chaincode_ops.CPChaincode(chain, chaincodeID);
+        cpChaincode = new chaincode_ops.CPChaincode(chain, chaincodeID);
 
         part2.setup(peers, cpChaincode);
-        router.setup_helpers(cpChaincode);
+        //setup_helpers(cpChaincode);
 
         // Now that the chain is ready, start the web socket server so clients can use the demo.
-        start_websocket_server();
+       // start_websocket_server();
     });
 
 // =====================================================================================================================

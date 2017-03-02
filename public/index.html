@@ -1,0 +1,55 @@
+<html>
+
+<body>
+    <h1>Release Inventory</h1>
+    <form method="post" action="/releaseInventory">
+        <table>
+            <tr>
+                <td><input name="lotId" value="1000" /></td>
+                <td><input name="adspotId" value="1" /></td>
+                <td><input name="inventoryDate" value="March 1" /></td>
+                <td><input name="programName" value="Dance Competition" /></td>
+                <td><input name="seasonEpisode" value="S13E1" /></td>
+                <td><input name="genre" value="Reality" /></td>
+                <td><input name="dayPart" value="Prime Mon" /></td>
+                <td><input name="targetGrp" value="2.4" /></td>
+                <td><input name="targetDemographics" value="Women 18 - 54" /></td>
+                <td><input name="initialCpm" value="1.25" /></td>
+                <td><input name="bsrp" value="355.2" /></td>
+                <td><input name="numberOfSpots" value="6" /></td>
+            </tr>
+            <tr>
+                <td><input name="lotId" value="1000" /></td>
+                <td><input name="adspotId" value="2" /></td>
+                <td><input name="inventoryDate" value="March 1" /></td>
+                <td><input name="programName" value="Urban Family" /></td>
+                <td><input name="seasonEpisode" value="S05E1" /></td>
+                <td><input name="genre" value="Sitcom" /></td>
+                <td><input name="dayPart" value="Prime Thur" /></td>
+                <td><input name="targetGrp" value="1.7" /></td>
+                <td><input name="targetDemographics" value="Women 18 - 54" /></td>
+                <td><input name="initialCpm" value="1" /></td>
+                <td><input name="bsrp" value="201.28" /></td>
+                <td><input name="numberOfSpots" value="6" /></td>
+            </tr>
+        </table>
+        <input type="submit" value="Submit" />
+    </form>
+</body>
+
+<br>
+<br>
+
+<h1>Query Place Orders</h1>
+<form method="post" action="/queryPlaceOrders">
+    <table>
+        <tr>
+            <td><input name="agencyId" value="AgencyA" /></td>
+            <td><input name="broadcasterId" value="BroadcasterA" /></td>
+        </tr>
+    </table>
+    <input type="submit" value="Submit" />
+</form>
+
+
+</html>
