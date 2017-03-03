@@ -148,61 +148,6 @@ app.post('/releaseInventory', function(req,res) {
      
 });
 
-// add coverage
-app.post('/addCoverage', function(req,res) {
-	console.log("addCoverage.....");
-		var requestJSON={};
-		var responseJSON={};
-		var dependents={};
-		var i;
-		requestJSON.CoverageName=req.body.CoverageName;
-		requestJSON.CoverageType=req.body.CoverageType;
-		requestJSON.CarrierID=req.body.CarrierID;
-		requestJSON.GroupNum=req.body.GroupNum;
-		requestJSON.PlanCode=req.body.PlanCode;
-		requestJSON.SubscriberID=req.body.SubscriberID;
-		requestJSON.SubscriberName=req.body.SubscriberName;
-		requestJSON.SubscriberDOB=req.body.SubscriberDOB;
-		requestJSON.IsPrimary=req.body.IsPrimary;
-		requestJSON.EndDate=req.body.EndDate;
-		requestJSON.StartDate=req.body.StartDate;
-		requestJSON.AnnualDeductible=req.body.AnnualDeductible;
-		requestJSON.AnnualBenefitMaximum=req.body.AnnualBenefitMaximum;
-		requestJSON.LifetimeBenefitMaximum=req.body.LifetimeBenefitMaximum;
-		requestJSON.PreventiveCare=req.body.PreventiveCare;
-		requestJSON.MinorRestorativeCare=req.body.MinorRestorativeCare;
-		requestJSON.MajorRestorativeCare=req.body.MajorRestorativeCare;
-		requestJSON.OrthodonticTreatment=req.body.OrthodonticTreatment;
-		requestJSON.OrthodonticLifetimeBenefitMaximum=req.body.OrthodonticLifetimeBenefitMaximum;
-		//requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
-		//requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumUseBal;
-		requestJSON.EmployerID=req.body.EmployerID;
-		requestJSON.Premium=req.body.Premium;
-			//	requestJSON.Dependents=req.body.Dependents;
-   cpChaincode.addCoverage(defaultDemoUser, [requestJSON.CoverageName,requestJSON.CoverageType,requestJSON.CarrierID,
-	requestJSON.GroupNum,requestJSON.PlanCode,requestJSON.SubscriberID,requestJSON.SubscriberName,requestJSON.SubscriberDOB,
-	requestJSON.IsPrimary,requestJSON.EndDate,requestJSON.StartDate,req.body.AnnualDeductible,req.body.AnnualBenefitMaximum,
-	req.body.LifetimeBenefitMaximum,req.body.PreventiveCare,req.body.MinorRestorativeCare,req.body.MajorRestorativeCare,
-	req.body.OrthodonticTreatment,req.body.OrthodonticLifetimeBenefitMaximum,
-	requestJSON.EmployerID,requestJSON.Premium],cb_invoked_api);
-
-	res.send("SUCCESS");
-});
-
-
-//Update coverage
-app.post('/updateCoverage', function(req,res) {
-	console.log("updateCoverage.....");
-		var requestJSON={};
-		//var responseJSON={};
-		requestJSON.SubscriberID=req.body.SubscriberID;
-		requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
-		requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumBal;
-		cpChaincode.updateCoverage(defaultDemoUser, [requestJSON.SubscriberID,requestJSON.AnnualDeductibleBal,requestJSON.AnnualBenefitMaximumBal], cb_invoked_api);
-		
-	 res.send("Success");
-});
-
 //////////////
 
 //get coverage for user
@@ -227,97 +172,7 @@ app.get('/getBlockchainRecord', function(req, res) {
 	cpChaincode.getBlockchainRecord(defaultDemoUser, recordKey, function(e,data) {
 		cb_received_response(e, data, res);
 	});
-
 });
-
-
-// Get a single participant's account information
-app.get('/verifyEmployment', function(req, res) {
-
-	var subscriberId = url.parse(req.url, true).query.subscriberId;
-
-	console.log('subscriberId: ', subscriberId);
-
-	cpChaincode.verifyEmployment(defaultDemoUser,  subscriberId, function(e,data) {
-		cb_received_response(e, data, res);
-	});
-
-});
-
-
-// Get a single participant's account information
-app.get('/verifyCoverage', function(req, res) {
-
-	var subscriberId = url.parse(req.url, true).query.subscriberId;
-	var memberId = url.parse(req.url, true).query.memberId;
-
-	console.log('subscriberId: ', subscriberId);
-
-	cpChaincode.verifyCoverage(defaultDemoUser, subscriberId, memberId, function(e,data) {
-		cb_received_response(e, data, res);
-	});
-
-});
-
-
-// Get a single participant's transaction history
-app.get('/getEmployeeRecord', function(req, res) {
-
-	var employeeId = url.parse(req.url, true).query.employeeId;
-
-	console.log('employeeId: ', employeeId);
-
-	cpChaincode.getEmployeeRecord(defaultDemoUser, employeeId, function(e, data) {
-		cb_received_response(e, data, res);
-	});
-
-});
-
-
-
-
-// add coverage
-app.post('/addCoverage', function(req,res) {
-	console.log("addCoverage.....");
-	
-		var requestJSON={};
-
-		requestJSON.CoverageName=req.body.CoverageName;
-		requestJSON.CoverageType=req.body.CoverageType;
-		requestJSON.CarrierID=req.body.CarrierID;
-		requestJSON.GroupNum=req.body.GroupNum;
-		requestJSON.PlanCode=req.body.PlanCode;
-		requestJSON.SubscriberID=req.body.SubscriberID;
-		requestJSON.SubscriberName=req.body.SubscriberName;
-		requestJSON.SubscriberDOB=req.body.SubscriberDOB;
-		requestJSON.IsPrimary=req.body.IsPrimary;
-		requestJSON.EndDate=req.body.EndDate;
-		requestJSON.StartDate=req.body.StartDate;
-		requestJSON.AnnualDeductible=req.body.AnnualDeductible;
-		requestJSON.AnnualBenefitMaximum=req.body.AnnualBenefitMaximum;
-		requestJSON.LifetimeBenefitMaximum=req.body.LifetimeBenefitMaximum;
-		requestJSON.PreventiveCare=req.body.PreventiveCare;
-		requestJSON.MinorRestorativeCare=req.body.MinorRestorativeCare;
-		requestJSON.MajorRestorativeCare=req.body.MajorRestorativeCare;
-		requestJSON.OrthodonticTreatment=req.body.OrthodonticTreatment;
-		requestJSON.OrthodonticLifetimeBenefitMaximum=req.body.OrthodonticLifetimeBenefitMaximum;
-		//requestJSON.AnnualDeductibleBal=req.body.AnnualDeductibleBal;
-		//requestJSON.AnnualBenefitMaximumBal=req.body.AnnualBenefitMaximumUseBal;
-		requestJSON.EmployerID=req.body.EmployerID;
-		requestJSON.Premium=req.body.Premium;
-			//	requestJSON.Dependents=req.body.Dependents;
-   cpChaincode.addCoverage(defaultDemoUser, [requestJSON.CoverageName,requestJSON.CoverageType,requestJSON.CarrierID,
-	requestJSON.GroupNum,requestJSON.PlanCode,requestJSON.SubscriberID,requestJSON.SubscriberName,requestJSON.SubscriberDOB,
-	requestJSON.IsPrimary,requestJSON.EndDate,requestJSON.StartDate,req.body.AnnualDeductible,req.body.AnnualBenefitMaximum,
-	req.body.LifetimeBenefitMaximum,req.body.PreventiveCare,req.body.MinorRestorativeCare,req.body.MajorRestorativeCare,
-	req.body.OrthodonticTreatment,req.body.OrthodonticLifetimeBenefitMaximum,
-	requestJSON.EmployerID,requestJSON.Premium], cb_invoked_api);
-
-	res.send("SUCCESS");
-});
-
-
-
 
 function cb_received_response(e, data, res) {
 	if (e != null) {
@@ -330,7 +185,6 @@ function cb_received_response(e, data, res) {
 
 	}
 }
-
 
 // Callback function for invoking a chaincode function
 function cb_invoked_api(e, a) {

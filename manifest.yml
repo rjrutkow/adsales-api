@@ -5,7 +5,7 @@ declared-services:
     plan: ibm-blockchain-plan-5-prod
 applications:
 - disk_quota: 1024M
-  name: cp-web
+  name: AdsalesWeb
   command: node app.js
   path: .
   instances: 1
