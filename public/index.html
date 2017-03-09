@@ -3,9 +3,10 @@
 <body>
     <h1>Release Inventory</h1>
     <form method="post" action="/releaseInventory">
+    Broadcaster Id: <input name="broadcasterId" value="BroadcasterA" /> <br>
+    Lot Id: <input name="lotId" value="1000" /><br>
         <table>
             <tr>
-                <td><input name="lotId" value="1000" /></td>
                 <td><input name="adspotId" value="1" /></td>
                 <td><input name="inventoryDate" value="March 1" /></td>
                 <td><input name="programName" value="Dance Competition" /></td>
@@ -19,7 +20,6 @@
                 <td><input name="numberOfSpots" value="6" /></td>
             </tr>
             <tr>
-                <td><input name="lotId" value="1000" /></td>
                 <td><input name="adspotId" value="2" /></td>
                 <td><input name="inventoryDate" value="March 1" /></td>
                 <td><input name="programName" value="Urban Family" /></td>
@@ -44,12 +44,11 @@
 <form method="post" action="/queryPlaceOrders">
     <table>
         <tr>
-            <td><input name="agencyId" value="AgencyA" /></td>
-            <td><input name="broadcasterId" value="BroadcasterA" /></td>
+            <td>Agency Id: <input name="agencyId" value="AgencyA" /></td>
+            <td>Broadcaster Id: <input name="broadcasterId" value="BroadcasterA" /></td>
         </tr>
     </table>
     <input type="submit" value="Submit" />
 </form>
-
 
 </html>

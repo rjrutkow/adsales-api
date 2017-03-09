@@ -1,6 +1,7 @@
+//AdsalesChaincode
 package main
 
-//Packages to import followed by a Pointer to your hyperledger installation
+//Packages to import followed by a Pointer to your hyperledger installation..............
 import (
 	"encoding/json"
 	"errors"
@@ -14,8 +15,10 @@ import (
 //CONSTANTS --------------------------------------------------------------------------------------------------------------------------
 //These are defined Constants for use throughout the gocode
 const noData string = "NA" //Defalt for empty string values
-const noValue int = -1     //Default for empty numerical values
+const noMakeup string = ""
+const noValue int = -1 //Default for empty numerical values
 const noTime string = "11 May 16 12:00 UTC"
+const noContractResults string = "No report available"
 
 //STRUCTURES --------------------------------------------------------------------------------------------------------------------------
 // SimpleChaincode required structure
@@ -44,33 +47,31 @@ type adspot struct {
 	AdContractId       int       `json:"adContractId"`
 	AdAssignedDate     time.Time `json:"adAssignedDate"`
 	CampaignName       string    `json:"campaignName"`
-	CampaignId         string    `json:"campaignId"`
-	WasAired           string    `json:"wasAired"`
+	//CampaignId         string    `json:"campaignId"`
+	ContractResults    string    `json:"contractResults"`
 	AiredDate          time.Time `json:"airedDate"`
-	//AiredTime          string    `json:"airedTime"`
-	ActualGrp          float64 `json:"actualGrp"`
-	ActualProgramName  string  `json:"actualProgramName"`
-	ActualDemographics string  `json:"actualDemographics"`
-	MakupAdspotId      string  `json:"makupAdspotId"`
+	ActualGrp          float64   `json:"actualGrp"`
+	ActualProgramName  string    `json:"actualProgramName"`
+	ActualDemographics string    `json:"actualDemographics"`
+	MakupAdspotId      string    `json:"makupAdspotId"`
 }
 
 //This is a helper structure for releasing Adspots (STEP 1)
 type releaseInventory struct {
-	LotId              string `json:"lotId"`
-	AdspotId           string `json:"adspotId"`
-	InventoryDate      string `json:"inventoryDate"`
-	ProgramName        string `json:"programName"`
-	SeasonEpisode      string `json:"seasonEpisode"`
-	BroadcasterId      string `json:"broadcasterId"`
-	Genre              string `json:"genre"`
-	DayPart            string `json:"dayPart"`
-	TargetGrp          string `json:"targetGrp"`
-	TargetDemographics string `json:"targetDemographics"`
-	InitialCpm         string `json:"initialCpm"`
-	Bsrp               string `json:"bsrp"`
-	NumberOfSpots      string `json:"numberofSpots"`
-	//releaseDate - do we need this?
-	//UniqueAdspotID - to we need this?
+	LotId               string `json:"lotId"`
+	AdspotId            string `json:"adspotId"`
+	InventoryDate       string `json:"inventoryDate"`
+	ProgramName         string `json:"programName"`
+	SeasonEpisode       string `json:"seasonEpisode"`
+	BroadcasterId       string `json:"broadcasterId"`
+	Genre               string `json:"genre"`
+	DayPart             string `json:"dayPart"`
+	TargetGrp           string `json:"targetGrp"`
+	TargetDemographics  string `json:"targetDemographics"`
+	InitialCpm          string `json:"initialCpm"`
+	Bsrp                string `json:"bsrp"`
+	NumberOfSpots       string `json:"numberofSpots"`
+	NumberReservedSpots string `json:"numberReservedSpots"`
 }
 
 // This is a helper structure for querying placed orders (STEP 2)
@@ -116,6 +117,7 @@ type queryPlaceOrdersStruc struct {
 	TargetDemographics string  `json:"targetDemographics"`
 	InitialCpm         float64 `json:"initialCpm"`
 	Bsrp               float64 `json:"bsrp"`
+	NumberOfSpots      int     `json:"numberOfSpots"`
 }
 
 // This is a helper structure for querying placed orders (STEP 2)
@@ -147,20 +149,20 @@ type mapAdspots struct {
 }
 
 type queryAsRunStruc struct {
-	UniqueAdspotId     string    `json:"uniqueAdspotId"`
-	AdContractId       int       `json:"adContractId"`
-	CampaignName       string    `json:"campaignName"`
-	CampaignId         string    `json:"campaignId"`
+	UniqueAdspotId string `json:"uniqueAdspotId"`
+	AdspotId       int    `json:"adspotId"`
+	AdContractId   int    `json:"adContractId"`
+	CampaignName   string `json:"campaignName"`
+	//CampaignId         string    `json:"campaignId"`
 	ProgramName        string    `json:"programName"`
 	TargetGrp          float64   `json:"targetGrp"`
 	TargetDemographics string    `json:"targetDemographics"`
-	WasAired           string    `json:"wasAired"`
+	ContractResults    string    `json:"contractResults"`
 	AiredDate          time.Time `json:"airedDate"`
-	//AiredTime          string  `json:"airedTime"`
-	ActualGrp          float64 `json:"actualGrp"`
-	ActualProgramName  string  `json:"actualProgramName"`
-	ActualDemographics string  `json:"actualDemographics"`
-	MakupAdspotId      string  `json:"makupAdspotId"`
+	ActualGrp          float64   `json:"actualGrp"`
+	ActualProgramName  string    `json:"actualProgramName"`
+	ActualDemographics string    `json:"actualDemographics"`
+	MakupAdspotId      string    `json:"makupAdspotId"`
 }
 
 type queryAsRunArray struct {
@@ -169,13 +171,44 @@ type queryAsRunArray struct {
 
 type reportAsRun struct {
 	UniqueAdspotId     string `json:"uniqueAdspotId"`
-	WasAired           string `json:"wasAired"`
+	ContractResults    string `json:"contractResults"`
 	AiredDate          string `json:"airedDate"`
 	AiredTime          string `json:"airedTime"`
 	ActualGrp          string `json:"actualGrp"`
 	ActualProgramName  string `json:"actualProgramName"`
 	ActualDemographics string `json:"actualDemographics"`
 	MakupAdspotId      string `json:"makupAdspotId"`
+}
+
+type queryTraceAdSpotsResturnStruct struct {
+	UniqueAdspotId     string    `json:"uniqueAdspotId"`
+	LotId              int       `json:"lotId"`
+	AdspotId           int       `json:"adspotId"`
+	InventoryDate      time.Time `json:"inventoryDate"`
+	ProgramName        string    `json:"programName"`
+	SeasonEpisode      string    `json:"seasonEpisode"`
+	BroadcasterId      string    `json:"broadcasterId"`
+	Genre              string    `json:"genre"`
+	DayPart            string    `json:"dayPart"`
+	TargetGrp          float64   `json:"targetGrp"`
+	TargetDemographics string    `json:"targetDemographics"`
+	InitialCpm         float64   `json:"initialCpm"`
+	Bsrp               float64   `json:"bsrp"`
+	OrderDate          time.Time `json:"orderDate"`
+	AdAgencyId         string    `json:"adAgencyId"`
+	OrderNumber        int       `json:"orderNumber"`
+	AdvertiserId       string    `json:"advertiserId"`
+	AdContractId       int       `json:"adContractId"`
+	AdAssignedDate     time.Time `json:"adAssignedDate"`
+	CampaignName       string    `json:"campaignName"`
+	//CampaignId         string    `json:"campaignId"`
+	ContractResults    string    `json:"contractResults"`
+	AiredDate          time.Time `json:"airedDate"`
+	ActualGrp          float64   `json:"actualGrp"`
+	ActualProgramName  string    `json:"actualProgramName"`
+	ActualDemographics string    `json:"actualDemographics"`
+	MakupAdspotId      string    `json:"makupAdspotId"`
+	MakeupAdspotData   []adspot  `json:"makupAdspotData"`
 }
 
 //For Debugging
@@ -198,6 +231,7 @@ func (t *SimpleChaincode) releaseInventory(stub shim.ChaincodeStubInterface, arg
 	fmt.Println("Running releaseInventory")
 
 	var broadcasterID = args[0]
+	var thisLotId = args[1]
 	var increment = 1
 
 	fmt.Println(broadcasterID)
@@ -205,7 +239,7 @@ func (t *SimpleChaincode) releaseInventory(stub shim.ChaincodeStubInterface, arg
 	allAdspotPointers, _ := t.getAllAdspotPointers(stub, broadcasterID)
 
 	//Outer Loop
-	for i := 1; i < len(args); i++ {
+	for i := 2; i < len(args); i++ {
 
 		var in = args[i]
 
@@ -224,8 +258,8 @@ func (t *SimpleChaincode) releaseInventory(stub shim.ChaincodeStubInterface, arg
 		for x := 0; x < NumberOfSpots; x++ {
 			var ThisAdspot adspot
 
-			ThisAdspot.UniqueAdspotId = (releaseInventoryObj.LotId + "_" + strconv.Itoa(increment))
-			ThisAdspot.LotId, _ = strconv.Atoi(releaseInventoryObj.LotId)
+			ThisAdspot.UniqueAdspotId = (thisLotId + "_" + strconv.Itoa(increment))
+			ThisAdspot.LotId, _ = strconv.Atoi(thisLotId)
 			ThisAdspot.AdspotId, _ = strconv.Atoi(releaseInventoryObj.AdspotId)
 
 			//Get Current Time
@@ -248,14 +282,60 @@ func (t *SimpleChaincode) releaseInventory(stub shim.ChaincodeStubInterface, arg
 			ThisAdspot.AdContractId = noValue
 			ThisAdspot.AdAssignedDate, _ = time.Parse(time.RFC822, currentDateStr)
 			ThisAdspot.CampaignName = noData
-			ThisAdspot.CampaignId = noData
-			ThisAdspot.WasAired = noData
+			//ThisAdspot.CampaignId = noData
+			ThisAdspot.ContractResults = noContractResults
 			ThisAdspot.AiredDate, _ = time.Parse(time.RFC822, currentDateStr)
 			//ThisAdspot.AiredTime = noData
 			ThisAdspot.ActualGrp = float64(noValue)
 			ThisAdspot.ActualProgramName = noData
 			ThisAdspot.ActualDemographics = noData
-			ThisAdspot.MakupAdspotId = noData
+			ThisAdspot.MakupAdspotId = noMakeup
+
+			increment++
+			fmt.Printf("ThisAdspot: %+v ", ThisAdspot)
+			fmt.Printf("\n")
+			allAdspotPointers.UniqueAdspotId = append(allAdspotPointers.UniqueAdspotId, ThisAdspot.UniqueAdspotId)
+
+			t.putAdspot(stub, ThisAdspot)
+		}
+
+		NumberReservedSpots, _ := strconv.Atoi(releaseInventoryObj.NumberReservedSpots)
+
+		for y := 0; y < NumberReservedSpots; y++ {
+			var ThisAdspot adspot
+
+			ThisAdspot.UniqueAdspotId = (thisLotId + "_" + strconv.Itoa(increment))
+			ThisAdspot.LotId, _ = strconv.Atoi(thisLotId)
+			ThisAdspot.AdspotId = noValue
+
+			//Get Current Time
+			currentDateStr := time.Now().Format(time.RFC822)
+			ThisAdspot.InventoryDate, _ = time.Parse(time.RFC822, currentDateStr)
+
+			ThisAdspot.ProgramName = releaseInventoryObj.ProgramName
+			ThisAdspot.SeasonEpisode = releaseInventoryObj.SeasonEpisode
+			ThisAdspot.BroadcasterId = broadcasterID
+			ThisAdspot.Genre = releaseInventoryObj.Genre
+			ThisAdspot.DayPart = releaseInventoryObj.DayPart
+			ThisAdspot.TargetGrp, _ = strconv.ParseFloat(releaseInventoryObj.TargetGrp, 64)
+			ThisAdspot.TargetDemographics = releaseInventoryObj.TargetDemographics
+			ThisAdspot.InitialCpm, _ = strconv.ParseFloat(releaseInventoryObj.InitialCpm, 64)
+			ThisAdspot.Bsrp, _ = strconv.ParseFloat(releaseInventoryObj.Bsrp, 64)
+			ThisAdspot.OrderDate, _ = time.Parse(time.RFC822, currentDateStr)
+			ThisAdspot.AdAgencyId = noData
+			ThisAdspot.OrderNumber = noValue
+			ThisAdspot.AdvertiserId = noData
+			ThisAdspot.AdContractId = noValue
+			ThisAdspot.AdAssignedDate, _ = time.Parse(time.RFC822, currentDateStr)
+			ThisAdspot.CampaignName = noData
+			//ThisAdspot.CampaignId = noData
+			ThisAdspot.ContractResults = noContractResults
+			ThisAdspot.AiredDate, _ = time.Parse(time.RFC822, currentDateStr)
+			//ThisAdspot.AiredTime = noData
+			ThisAdspot.ActualGrp = float64(noValue)
+			ThisAdspot.ActualProgramName = noData
+			ThisAdspot.ActualDemographics = noData
+			ThisAdspot.MakupAdspotId = noMakeup
 
 			increment++
 			fmt.Printf("ThisAdspot: %+v ", ThisAdspot)
@@ -363,28 +443,64 @@ func (t *SimpleChaincode) queryPlaceOrders(stub shim.ChaincodeStubInterface, arg
 	fmt.Println("Launching queryPlaceOrders Function")
 	broadcasterId := args[1]
 	var queryPlaceOrdersArrayObj queryPlaceOrdersArray
-
 	broadcasterAllAdspotsPointers, _ := t.getAllAdspotPointers(stub, broadcasterId)
+	var currentAdspotId = -1
 
-	for i := 0; i < len(broadcasterAllAdspotsPointers.UniqueAdspotId); i++ {
+	i := 0
+	for i < len(broadcasterAllAdspotsPointers.UniqueAdspotId) {
 		var queryPlaceOrdersStrucObj queryPlaceOrdersStruc
 		ThisAdspot, _ := t.getAdspot(stub, broadcasterAllAdspotsPointers.UniqueAdspotId[i])
 
-		if ThisAdspot.AdContractId == noValue {
-			queryPlaceOrdersStrucObj.AdspotId = ThisAdspot.AdspotId
-			queryPlaceOrdersStrucObj.BroadcasterId = ThisAdspot.BroadcasterId
-			queryPlaceOrdersStrucObj.Bsrp = ThisAdspot.Bsrp
-			queryPlaceOrdersStrucObj.DayPart = ThisAdspot.DayPart
-			queryPlaceOrdersStrucObj.Genre = ThisAdspot.Genre
-			queryPlaceOrdersStrucObj.InitialCpm = ThisAdspot.InitialCpm
-			queryPlaceOrdersStrucObj.LotId = ThisAdspot.LotId
-			queryPlaceOrdersStrucObj.ProgramName = ThisAdspot.ProgramName
-			queryPlaceOrdersStrucObj.TargetDemographics = ThisAdspot.TargetDemographics
-			queryPlaceOrdersStrucObj.TargetGrp = ThisAdspot.TargetGrp
-			queryPlaceOrdersArrayObj.PlacedOrderData = append(queryPlaceOrdersArrayObj.PlacedOrderData, queryPlaceOrdersStrucObj)
-		}
+		// if different Aspot id found and it is not a reserved spot
+		if (ThisAdspot.AdspotId != currentAdspotId) && (ThisAdspot.AdspotId != noValue) {
+			if ThisAdspot.AdContractId == noValue {
+				currentAdspotId = ThisAdspot.AdspotId
+				queryPlaceOrdersStrucObj.AdspotId = ThisAdspot.AdspotId
+				queryPlaceOrdersStrucObj.BroadcasterId = ThisAdspot.BroadcasterId
+				queryPlaceOrdersStrucObj.Bsrp = ThisAdspot.Bsrp
+				queryPlaceOrdersStrucObj.DayPart = ThisAdspot.DayPart
+				queryPlaceOrdersStrucObj.Genre = ThisAdspot.Genre
+				queryPlaceOrdersStrucObj.InitialCpm = ThisAdspot.InitialCpm
+				queryPlaceOrdersStrucObj.LotId = ThisAdspot.LotId
+				queryPlaceOrdersStrucObj.ProgramName = ThisAdspot.ProgramName
+				queryPlaceOrdersStrucObj.TargetDemographics = ThisAdspot.TargetDemographics
+				queryPlaceOrdersStrucObj.TargetGrp = ThisAdspot.TargetGrp
+				queryPlaceOrdersStrucObj.NumberOfSpots = 1
+
+				addedToArray := false
+
+				for j := (i + 1); j < len(broadcasterAllAdspotsPointers.UniqueAdspotId); j++ {
+					NextAdspot, _ := t.getAdspot(stub, broadcasterAllAdspotsPointers.UniqueAdspotId[j])
+					addedToArray = false
+					if NextAdspot.AdspotId == currentAdspotId { /// if next row of data same ad spot id and
+						if NextAdspot.AdContractId == noValue { // if ad spot is available for purchase, count it
+							fmt.Printf("*** Found dupilcate for show: %v \n", ThisAdspot.ProgramName)
+							queryPlaceOrdersStrucObj.NumberOfSpots++
+							fmt.Printf("*** Number of spots for this show is now: %v \n", queryPlaceOrdersStrucObj.NumberOfSpots)
+						}
+					} else if NextAdspot.AdspotId == noValue { // skip the reserved AllAdspots
+						fmt.Printf("*** Found reserved spot for show: %v \n", ThisAdspot.ProgramName)
+					} else { // different ad spot id found - save data and break out of loop
+						addedToArray = true
+						fmt.Printf("*** in else ... Saving data - number of spots is: %v \n", queryPlaceOrdersStrucObj.NumberOfSpots)
+						queryPlaceOrdersArrayObj.PlacedOrderData = append(queryPlaceOrdersArrayObj.PlacedOrderData, queryPlaceOrdersStrucObj)
+						i = (j - 1)
+						fmt.Printf("*** setting i to: %v \n", i)
+						break
+					}
+				} // for
+
+				if !addedToArray {
+					fmt.Printf("*** in if !addedToArray ... Saving data - number of spots is: %v \n", queryPlaceOrdersStrucObj.NumberOfSpots)
+
+					queryPlaceOrdersArrayObj.PlacedOrderData = append(queryPlaceOrdersArrayObj.PlacedOrderData, queryPlaceOrdersStrucObj)
+				}
+			} // if
+		} // if
+		i++
 	}
 
+	fmt.Printf("*** object to return: %v \n ", queryPlaceOrdersArrayObj)
 	jsonAsBytes, err := json.Marshal(queryPlaceOrdersArrayObj)
 	if err != nil {
 		fmt.Println("Error returning json output for queryPlaceOrders ")
@@ -406,18 +522,20 @@ func (t *SimpleChaincode) queryAdspotsToMap(stub shim.ChaincodeStubInterface, ar
 	agencyAllAdspotsPointers, _ := t.getAllAdspotPointers(stub, agencyId)
 
 	for i := 0; i < len(agencyAllAdspotsPointers.UniqueAdspotId); i++ {
-		var queryAdspotsToMapStructObj queryAdspotsToMapStruct
 		ThisAdspot, _ := t.getAdspot(stub, agencyAllAdspotsPointers.UniqueAdspotId[i])
 
-		queryAdspotsToMapStructObj.UniqueAdspotId = ThisAdspot.UniqueAdspotId
-		queryAdspotsToMapStructObj.BroadcasterId = ThisAdspot.BroadcasterId
-		queryAdspotsToMapStructObj.AdContractId = ThisAdspot.AdContractId
-		queryAdspotsToMapStructObj.CampaignName = ThisAdspot.CampaignName
-		queryAdspotsToMapStructObj.AdvertiserId = ThisAdspot.AdvertiserId
-		queryAdspotsToMapStructObj.TargetGrp = ThisAdspot.TargetGrp
-		queryAdspotsToMapStructObj.TargetDemographics = ThisAdspot.TargetDemographics
-		queryAdspotsToMapStructObj.InitialCpm = ThisAdspot.InitialCpm
-		queryAdspotsToMapArrayObj.AdspotsToMapData = append(queryAdspotsToMapArrayObj.AdspotsToMapData, queryAdspotsToMapStructObj)
+		if ThisAdspot.AdspotId != noValue { // if not a reserved spot
+			var queryAdspotsToMapStructObj queryAdspotsToMapStruct
+			queryAdspotsToMapStructObj.UniqueAdspotId = ThisAdspot.UniqueAdspotId
+			queryAdspotsToMapStructObj.BroadcasterId = ThisAdspot.BroadcasterId
+			queryAdspotsToMapStructObj.AdContractId = ThisAdspot.AdContractId
+			queryAdspotsToMapStructObj.CampaignName = ThisAdspot.CampaignName
+			queryAdspotsToMapStructObj.AdvertiserId = ThisAdspot.AdvertiserId
+			queryAdspotsToMapStructObj.TargetGrp = ThisAdspot.TargetGrp
+			queryAdspotsToMapStructObj.TargetDemographics = ThisAdspot.TargetDemographics
+			queryAdspotsToMapStructObj.InitialCpm = ThisAdspot.InitialCpm
+			queryAdspotsToMapArrayObj.AdspotsToMapData = append(queryAdspotsToMapArrayObj.AdspotsToMapData, queryAdspotsToMapStructObj)
+		}
 	}
 
 	jsonAsBytes, err := json.Marshal(queryAdspotsToMapArrayObj)
@@ -491,19 +609,20 @@ func (t *SimpleChaincode) queryAsRun(stub shim.ChaincodeStubInterface, args []st
 		ThisAdspot, _ := t.getAdspot(stub, broadcasterAllAdspotsPointers.UniqueAdspotId[i])
 
 		queryAsRunStrucObj.UniqueAdspotId = ThisAdspot.UniqueAdspotId
+		queryAsRunStrucObj.AdspotId = ThisAdspot.AdspotId
 		queryAsRunStrucObj.ActualDemographics = ThisAdspot.ActualDemographics
 		queryAsRunStrucObj.ActualGrp = ThisAdspot.ActualGrp
 		queryAsRunStrucObj.ActualProgramName = ThisAdspot.ActualProgramName
 		queryAsRunStrucObj.AdContractId = ThisAdspot.AdContractId
 		queryAsRunStrucObj.AiredDate = ThisAdspot.AiredDate
 		//queryAsRunStrucObj.AiredTime = ThisAdspot.AiredTime
-		queryAsRunStrucObj.CampaignId = ThisAdspot.CampaignId
+		//queryAsRunStrucObj.CampaignId = ThisAdspot.CampaignId
 		queryAsRunStrucObj.CampaignName = ThisAdspot.CampaignName
 		queryAsRunStrucObj.MakupAdspotId = ThisAdspot.MakupAdspotId
 		queryAsRunStrucObj.ProgramName = ThisAdspot.ProgramName
 		queryAsRunStrucObj.TargetDemographics = ThisAdspot.TargetDemographics
 		queryAsRunStrucObj.TargetGrp = ThisAdspot.TargetGrp
-		queryAsRunStrucObj.WasAired = ThisAdspot.WasAired
+		queryAsRunStrucObj.ContractResults = ThisAdspot.ContractResults
 
 		queryAsRunArrayObj.QueryAsRunData = append(queryAsRunArrayObj.QueryAsRunData, queryAsRunStrucObj)
 
@@ -548,8 +667,21 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 			AdSpotObj, _ := t.getAdspot(stub, uniqueAdspotKey)
 
 			if AdSpotObj.UniqueAdspotId == reportAsRunObj.UniqueAdspotId {
-				AdSpotObj.WasAired = reportAsRunObj.WasAired
+				//AdSpotObj.ContractResults = reportAsRunObj.ContractResults
 				AdSpotObj.MakupAdspotId = reportAsRunObj.MakupAdspotId
+
+				if AdSpotObj.MakupAdspotId != noMakeup {
+					fmt.Println("Detected Makeup Adspot, updating pointers for advertiser and adagency")
+					adAgencyAllPointers, _ := t.getAllAdspotPointers(stub, AdSpotObj.AdAgencyId)
+					advertiserAllPointers, _ := t.getAllAdspotPointers(stub, AdSpotObj.AdvertiserId)
+
+					adAgencyAllPointers.UniqueAdspotId = append(adAgencyAllPointers.UniqueAdspotId, AdSpotObj.MakupAdspotId)
+					advertiserAllPointers.UniqueAdspotId = append(advertiserAllPointers.UniqueAdspotId, AdSpotObj.MakupAdspotId)
+
+					t.putAllAdspotPointers(stub, adAgencyAllPointers, AdSpotObj.AdAgencyId)
+					t.putAllAdspotPointers(stub, advertiserAllPointers, AdSpotObj.AdvertiserId)
+
+				}
 
 				//Create Timestamp based on current Time
 				var airedDate time.Time = time.Now().AddDate(0, 0, 7)
@@ -565,25 +697,26 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 				if AdSpotObj.ActualProgramName == AdSpotObj.ProgramName {
 					if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
 						if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
-							fmt.Println("All Contract Terms Met. Setting WasAired to YES")
-							AdSpotObj.WasAired = "YES"
+							fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
+							AdSpotObj.ContractResults = "Completed Successfully"
 						} else {
-							fmt.Println("Demographics not met! Setting WasAired to FAILED")
-							AdSpotObj.WasAired = "FAILED"
+							fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
+							AdSpotObj.ContractResults = "Demographics requirements not met"
 							//LAUNCH AD RESCHEDULER
 						}
 					} else {
-						fmt.Println("Target GRP not met! Setting WasAired to FAILED")
-						AdSpotObj.WasAired = "FAILED"
+						fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
+						AdSpotObj.ContractResults = "GRP requirements not met"
 						//LAUNCH AD RESCHEDULER
 					}
 				} else {
-					fmt.Println("Program Name not met! Setting WasAired to FAILED")
-					AdSpotObj.WasAired = "FAILED"
+					fmt.Println("Program Name not met! Setting ContractResults to Program message")
+					AdSpotObj.ContractResults = "Program requirements not met"
 					//LAUNCH AD RESCHEDULER
 				}
 
 				t.putAdspot(stub, AdSpotObj)
+
 			} else {
 				fmt.Println("Unique Adspot ID Mismatch in reportAsRun - need to re-evaluate logic")
 			}
@@ -595,28 +728,60 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 }
 
 //STEP 5 Function - Trace a unique adspot
-//SIMILAR TO GET ALL ADSPOTS???
 func (t *SimpleChaincode) queryTraceAdSpots(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	fmt.Println("Launching queryTraceAdSpot")
 	userId := args[0]
 	fmt.Printf("Getting All Adspots for: " + userId)
-	var adspotResultsArray []adspot
+
+	var adspotResultsArray []queryTraceAdSpotsResturnStruct
+
 	allAdspotsPointers, _ := t.getAllAdspotPointers(stub, userId)
 
 	for j := 0; j < len(allAdspotsPointers.UniqueAdspotId); j++ {
 		ThisAdspot, _ := t.getAdspot(stub, allAdspotsPointers.UniqueAdspotId[j])
 
-		adspotResultsArray = append(adspotResultsArray, ThisAdspot)
+		var ThisQueryTraceAdspotsReturnStruct queryTraceAdSpotsResturnStruct
 
-		if ThisAdspot.MakupAdspotId != noData {
+		ThisQueryTraceAdspotsReturnStruct.ActualDemographics = ThisAdspot.ActualDemographics
+		ThisQueryTraceAdspotsReturnStruct.ActualGrp = ThisAdspot.ActualGrp
+		ThisQueryTraceAdspotsReturnStruct.ActualProgramName = ThisAdspot.ActualProgramName
+		ThisQueryTraceAdspotsReturnStruct.AdAgencyId = ThisAdspot.AdAgencyId
+		ThisQueryTraceAdspotsReturnStruct.AdAssignedDate = ThisAdspot.AdAssignedDate
+		ThisQueryTraceAdspotsReturnStruct.AdContractId = ThisAdspot.AdContractId
+		ThisQueryTraceAdspotsReturnStruct.AdspotId = ThisAdspot.AdspotId
+		ThisQueryTraceAdspotsReturnStruct.AdvertiserId = ThisAdspot.AdvertiserId
+		ThisQueryTraceAdspotsReturnStruct.AiredDate = ThisAdspot.AiredDate
+		ThisQueryTraceAdspotsReturnStruct.BroadcasterId = ThisAdspot.BroadcasterId
+		ThisQueryTraceAdspotsReturnStruct.Bsrp = ThisAdspot.Bsrp
+		//ThisQueryTraceAdspotsReturnStruct.CampaignId = ThisAdspot.CampaignId
+		ThisQueryTraceAdspotsReturnStruct.CampaignName = ThisAdspot.CampaignName
+		ThisQueryTraceAdspotsReturnStruct.DayPart = ThisAdspot.DayPart
+		ThisQueryTraceAdspotsReturnStruct.Genre = ThisAdspot.Genre
+		ThisQueryTraceAdspotsReturnStruct.InitialCpm = ThisAdspot.InitialCpm
+		ThisQueryTraceAdspotsReturnStruct.InventoryDate = ThisAdspot.InventoryDate
+		ThisQueryTraceAdspotsReturnStruct.LotId = ThisAdspot.LotId
+		ThisQueryTraceAdspotsReturnStruct.OrderDate = ThisAdspot.OrderDate
+		ThisQueryTraceAdspotsReturnStruct.OrderNumber = ThisAdspot.OrderNumber
+		ThisQueryTraceAdspotsReturnStruct.ProgramName = ThisAdspot.ProgramName
+		ThisQueryTraceAdspotsReturnStruct.SeasonEpisode = ThisAdspot.SeasonEpisode
+		ThisQueryTraceAdspotsReturnStruct.TargetDemographics = ThisAdspot.TargetDemographics
+		ThisQueryTraceAdspotsReturnStruct.TargetGrp = ThisAdspot.TargetGrp
+		ThisQueryTraceAdspotsReturnStruct.UniqueAdspotId = ThisAdspot.UniqueAdspotId
+		ThisQueryTraceAdspotsReturnStruct.ContractResults = ThisAdspot.ContractResults
 
+		if ThisAdspot.MakupAdspotId != noMakeup {
+			fmt.Println("Makeup addspot detected within queryTraceAdSpots")
 			ThisMakeupAdspotId := ThisAdspot.MakupAdspotId
 			ThisMakeupAdspot, _ := t.getAdspot(stub, ThisMakeupAdspotId)
-			adspotResultsArray = append(adspotResultsArray, ThisMakeupAdspot)
-		}
-	}
 
+			//Line below needs testing....
+			ThisQueryTraceAdspotsReturnStruct.MakeupAdspotData = append(ThisQueryTraceAdspotsReturnStruct.MakeupAdspotData, ThisMakeupAdspot)
+		}
+
+		adspotResultsArray = append(adspotResultsArray, ThisQueryTraceAdspotsReturnStruct)
+
+	}
 	jsonAsBytes, err := json.Marshal(adspotResultsArray)
 	if err != nil {
 		fmt.Println("Error returning json output for queryTraceAdSpot ")
@@ -645,6 +810,7 @@ func (t *SimpleChaincode) putAdspot(stub shim.ChaincodeStubInterface, adspotObj 
 	} else {
 		fmt.Println("Success - putAdspot putState works")
 	}
+
 	fmt.Println("putAdspot Function Complete")
 	return nil, nil
 }
@@ -728,6 +894,7 @@ func (t *SimpleChaincode) reInitAllPointers(stub shim.ChaincodeStubInterface) ([
 	agencyId := "AgencyA"
 	advertiser1Id := "AdvertiserA"
 	advertiser2Id := "AdvertiserB"
+	advertiser3Id := "AdvertiserC"
 
 	//Create array for all adspots in ledger
 	var AllAdspotsArray AllAdspots
@@ -736,6 +903,7 @@ func (t *SimpleChaincode) reInitAllPointers(stub shim.ChaincodeStubInterface) ([
 	t.putAllAdspotPointers(stub, AllAdspotsArray, agencyId)
 	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser1Id)
 	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser2Id)
+	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser3Id)
 
 	fmt.Println("Demo Reset Complete")
 	return nil, nil
@@ -752,6 +920,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	agencyId := "AgencyA"
 	advertiser1Id := "AdvertiserA"
 	advertiser2Id := "AdvertiserB"
+	advertiser3Id := "AdvertiserC"
 
 	//Create array for all adspots in ledger
 	var AllAdspotsArray AllAdspots
@@ -760,6 +929,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	t.putAllAdspotPointers(stub, AllAdspotsArray, agencyId)
 	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser1Id)
 	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser2Id)
+	t.putAllAdspotPointers(stub, AllAdspotsArray, advertiser3Id)
 
 	fmt.Println("Init Function Complete")
 	return nil, nil
