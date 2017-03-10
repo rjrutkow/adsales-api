@@ -54,7 +54,8 @@ CPChaincode.prototype.releaseInventory = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'releaseInventory successfully:', result.toString());
+        //console.log(TAG, 'releaseInventory successfully:', result.toString());
+        console.log(TAG, 'releaseInventory successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
@@ -94,7 +95,7 @@ CPChaincode.prototype.placeOrders = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'placeOrders successfully:', result.toString());
+        console.log(TAG, 'placeOrders successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
@@ -134,7 +135,7 @@ CPChaincode.prototype.mapAdspots = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'mapAdspots successfully:', result.toString());
+        console.log(TAG, 'mapAdspots successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
@@ -175,7 +176,7 @@ CPChaincode.prototype.reportAsRun = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'reportAsRun successfully:', result.toString());
+        console.log(TAG, 'reportAsRun successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }

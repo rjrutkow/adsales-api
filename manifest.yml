@@ -1,14 +1,14 @@
 ---
 declared-services:
-  cpblockchain:
+  adsales-blockchain:
     label: ibm-blockchain-5-prod
     plan: ibm-blockchain-plan-5-prod
 applications:
 - disk_quota: 1024M
-  name: AdsalesWeb
+  name: adsales-api
   command: node app.js
   path: .
   instances: 1
   memory: 512M
   services: 
-    - cpblockchain
+    - adsales-blockchain

@@ -30,7 +30,7 @@ var fs = require('fs');
 
 
 var cpChaincode = null;
-var url 		= require('url');
+var url = require('url');
 var defaultDemoUser = "WebAppAdmin";
 
 // =====================================================================================================================
@@ -45,12 +45,12 @@ app.engine('.html', require('pug').__express);
 app.use(compression());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Create a static folder to serve up the CSS and JS for the demo.  These images shouldn't change very often, so we
 // can set longer cache limits for them.
-app.use(serve_static(path.join(__dirname, 'public'), {maxAge: '1d', setHeaders: setCustomCC})); // 1 day cache
+app.use(serve_static(path.join(__dirname, 'public'), { maxAge: '1d', setHeaders: setCustomCC })); // 1 day cache
 function setCustomCC(res, path) {
     // 30 days cache
     if (serve_static.mime.lookup(path) === 'image/jpeg') res.setHeader('Cache-Control', 'public, max-age=2592000');
@@ -59,7 +59,7 @@ function setCustomCC(res, path) {
 }
 
 // Use a session to track how many requests we receive from a client (See below)
-app.use(session({secret: 'Somethignsomething1234!test', resave: true, saveUninitialized: true}));
+app.use(session({ secret: 'Somethignsomething1234!test', resave: true, saveUninitialized: true }));
 
 // Enable CORS preflight across the board so browser will let the app make REST requests
 app.options('*', cors());
@@ -77,18 +77,40 @@ app.use(function (req, res, next) {
 
 ///////////
 // Set the home page for the Open Points app by sending an html file
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
 
-	var filePath = path.join(__dirname, '/public/index.html');
-	var homeFile = fs.readFile(filePath);
+    var filePath = path.join(__dirname, '/public/index.html');
+    var homeFile = fs.readFile(filePath);
 
-	fs.readFile(filePath, {encoding : 'utf-8'}, function(err, data) {	 
-	    res.send(data);
-	});
+    fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
+        res.send(data);
+    });
 });
 
-app.post('/releaseInventory', function(req,res) {
+app.post('/releaseInventory', function (req, res) {
     console.log("In ReleaseInventory!!");
+    console.log("Input Params: " + JSON.stringify(req.body));
+    var data = JSON.parse(req.body.data);
+
+    var params = new Array();
+    params.push(data.broadcasterId);
+    params.push(data.lotId);
+
+    console.log("ad spot data: " + data.spots);
+    var spotData = data.spots;
+    for (var i = 0; i < spotData.length; i++) {
+        var adspotData = spotData[i];
+        params.push(adspotData);
+        console.log(i + ") Adspot Data: " + adspotData);
+    }
+
+    cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
+});
+
+app.post('/releaseInventoryOLD', function (req, res) {
+    console.log("In ReleaseInventory OLD!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
     var params = new Array();
@@ -98,7 +120,6 @@ app.post('/releaseInventory', function(req,res) {
     for (var i = 0; i < req.body.adspotId.length; i++) {
         var adspotData = {};
         adspotData.adspotId = req.body.adspotId[i];
-        adspotData.inventoryDate = req.body.inventoryDate[i];
         adspotData.programName = req.body.programName[i];
         adspotData.seasonEpisode = req.body.seasonEpisode[i];
         adspotData.genre = req.body.genre[i];
@@ -112,136 +133,168 @@ app.post('/releaseInventory', function(req,res) {
         console.log("Adspot Data: " + JSON.stringify(adspotData));
     }
     //console.log(data);
-    cpChaincode.releaseInventory(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});   
+    cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/queryPlaceOrders', function(req,res) {
+app.post('/queryPlaceOrders', function (req, res) {
     console.log("In queryPlaceOrders!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
+    var params = new Array();
+    params.push(data.agencyId);
+    params.push(data.broadcasterId);
+
+    cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
+});
+
+app.post('/queryPlaceOrdersOLD', function (req, res) {
+    console.log("In queryPlaceOrders OLD!!");
+    console.log("Input Params: " + JSON.stringify(req.body));
+
     var params = new Array();
     params.push(req.body.agencyId);
     params.push(req.body.broadcasterId);
 
-    cpChaincode.queryPlaceOrders(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/placeOrders', function(req,res) {
+app.post('/placeOrders', function (req, res) {
     console.log("In PlaceOrders!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.agencyId);
-    params.push(req.body.broadcasterId);
+    params.push(data.agencyId);
+    params.push(data.broadcasterId);
 
-    // tbd
+    console.log("ad spot data: " + data.spots);
+    var spotData = data.spots;
+    for (var i = 0; i < spotData.length; i++) {
+        var adspotData = spotData[i];
+        params.push(adspotData);
+        console.log(i + ") Adspot Data: " + adspotData);
+    }
 
-    cpChaincode.placeOrders(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.placeOrders(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/queryAdspotsToMap', function(req,res) {
+app.post('/queryAdspotsToMap', function (req, res) {
     console.log("In queryAdspotsToMap!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.agencyId);
-     
-    // tbd 
+    params.push(data.agencyId);
 
-    cpChaincode.queryAdspotsToMap(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.queryAdspotsToMap(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/mapAdspots', function(req,res) {
+app.post('/mapAdspots', function (req, res) {
     console.log("In mapAdspots!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.agencyId);
+    params.push(data.agencyId);
 
-    // tbd
+    console.log("ad spot data: " + data.spots);
+    var spotData = data.spots;
+    for (var i = 0; i < spotData.length; i++) {
+        var adspotData = spotData[i];
+        params.push(adspotData);
+        console.log(i + ") Adspot Data: " + adspotData);
+    }
 
-    cpChaincode.mapAdspots(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.mapAdspots(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/queryAsRun', function(req,res) {
+app.post('/queryAsRun', function (req, res) {
     console.log("In queryAsRun!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.broadcasterId);
-     
-    // tbd 
+    params.push(data.broadcasterId);
 
-    cpChaincode.queryAsRun(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.queryAsRun(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/reportAsRun', function(req,res) {
+app.post('/reportAsRun', function (req, res) {
     console.log("In reportAsRun!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.broadcasterId);
+    params.push(data.broadcasterId);
 
-    // tbd
+    console.log("ad spot data: " + data.spots);
+    var spotData = data.spots;
+    for (var i = 0; i < spotData.length; i++) {
+        var adspotData = spotData[i];
+        params.push(adspotData);
+        console.log(i + ") Adspot Data: " + adspotData);
+    }
 
-    cpChaincode.reportAsRun(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.reportAsRun(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
-app.post('/queryTraceAdSpots', function(req,res) {
+app.post('/queryTraceAdSpots', function (req, res) {
     console.log("In queryTraceAdSpots!!");
     console.log("Input Params: " + JSON.stringify(req.body));
 
+    var data = JSON.parse(req.body.data);
     var params = new Array();
-    params.push(req.body.userId);
-     
-    // tbd 
+    params.push(data.userId);
 
-    cpChaincode.queryTraceAdSpots(defaultDemoUser,params,function(e, data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.queryTraceAdSpots(defaultDemoUser, params, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
 // Get a single participant's account information
-app.get('/getBlockchainRecord', function(req, res) {
+app.get('/getBlockchainRecord', function (req, res) {
 
-	var recordKey = url.parse(req.url, true).query.recordKey;
+    var recordKey = url.parse(req.url, true).query.recordKey;
 
-	console.log('recordKey: ', recordKey);
+    console.log('recordKey: ', recordKey);
 
-	cpChaincode.getBlockchainRecord(defaultDemoUser, recordKey, function(e,data) {
-		cb_received_response(e, data, res);
-	});
+    cpChaincode.getBlockchainRecord(defaultDemoUser, recordKey, function (e, data) {
+        cb_received_response(e, data, res);
+    });
 });
 
 function cb_received_response(e, data, res) {
-	if (e != null) {
-		console.log('Received this error when calling a chaincode function', e);
-	} else {
-		console.log(JSON.stringify(data));
-		if (res) {
-			res.send(data);
-		}
+    if (e != null) {
+        console.log('Received this error when calling a chaincode function', e);
+    } else {
+        console.log(JSON.stringify(data));
+        if (res) {
+            res.send(data);
+        }
 
-	}
+    }
 }
 
 // Callback function for invoking a chaincode function
 function cb_invoked_api(e, a) {
-	console.log('response: ', e, a);
+    console.log('response: ', e, a);
 }
 
 // This router will serve up our pages and API calls.
@@ -261,9 +314,9 @@ app.use(function (err, req, res, next) {		// = development error handler, print 
     console.log(TAG, 'Error Handler -', req.url);
     var errorCode = err.status || 500;
     res.status(errorCode);
-    req.bag.error = {msg: err.stack, status: errorCode};
+    req.bag.error = { msg: err.stack, status: errorCode };
     if (req.bag.error.status == 404) req.bag.error.msg = 'Sorry, I cannot locate that file';
-    res.render('template/error', {bag: req.bag});
+    res.render('template/error', { bag: req.bag });
 });
 
 // =====================================================================================================================
@@ -394,7 +447,7 @@ var chain_setup = require('./utils/chain_setup');
 chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, certificate_path,
     function (error, chain, chaincodeID) {
 
-        if(error) {
+        if (error) {
             console.log(TAG, 'Chain setup failed:', error);
             throw error;
         }
@@ -409,7 +462,7 @@ chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, cert
         //setup_helpers(cpChaincode);
 
         // Now that the chain is ready, start the web socket server so clients can use the demo.
-       // start_websocket_server();
+        // start_websocket_server();
     });
 
 // =====================================================================================================================
@@ -422,11 +475,11 @@ function start_websocket_server(error, d) {
     if (error != null) {
         //look at tutorial_part1.md in the trouble shooting section for help
         console.log('! looks like the final configuration failed, holding off on the starting the socket\n', error);
-        if (!process.error) process.error = {type: 'deploy', msg: error.message};
+        if (!process.error) process.error = { type: 'deploy', msg: error.message };
     }
     else {
         console.log('------------------------------------------ Websocket Up ------------------------------------------');
-        wss = new ws.Server({server: server});												//start the websocket now
+        wss = new ws.Server({ server: server });												//start the websocket now
         wss.on('connection', function connection(ws) {
             ws.on('message', function incoming(message) {
                 console.log('received ws msg:', message);
@@ -463,7 +516,7 @@ function start_websocket_server(error, d) {
             function success(statusCode, headers, resp) {
                 resp = JSON.parse(resp);
                 if (resp && resp.height) {
-                    wss.broadcast({msg: 'reset'});
+                    wss.broadcast({ msg: 'reset' });
                 }
             }
 
