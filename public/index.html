@@ -6,7 +6,7 @@
             var d = new Date();
             var n = d.toLocaleString();
             var dataDiv = document.getElementById(path);
-            dataDiv.innerHTML ="<hr><h3>" + path + " Request " + n + "</h3>" + JSON.stringify(data);
+            dataDiv.innerHTML = "<h3>" + "Request " + n + "</h3>" + JSON.stringify(data);
 
             var http = new XMLHttpRequest();
             var url = "/" + path;
@@ -220,44 +220,60 @@
         <input type="submit" value="Submit" />
     </form>
 
-    <table>
+    <table border=1>
         <tr>
-            <td> <input type="button" value="Release Inventory" onclick="releaseInventory();" /></td>
-            <td><input type="button" value="Query Place Orders" onclick="queryPlaceOrders();" /></td>
-            <td><input type="button" value="Place Orders" onclick="placeOrders();" /></td>
-            <td><input type="button" value="Query Adspots To Map" onclick="queryAdspotsToMap();" /></td>
-            <td><input type="button" value="Map Ad Spots" onclick="mapAdspots();" /></td>
-            <td><input type="button" value="Query As Run" onclick="queryAsRun();" /></td>
-            <td><input type="button" value="Report As Run" onclick="reportAsRun();" /></td>
+            <td valign=top> <input type="button" value="Release Inventory" onclick="releaseInventory();" /></td>
+            <td>
+                <div id="releaseInventory"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Query Place Orders" onclick="queryPlaceOrders();" /></td>
+            <td>
+                <div id="queryPlaceOrders"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Place Orders" onclick="placeOrders();" /></td>
+            <td>
+                <div id="placeOrders"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Query Adspots To Map" onclick="queryAdspotsToMap();" /></td>
+            <td>
+                <div id="queryAdspotsToMap"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Map Ad Spots" onclick="mapAdspots();" /></td>
+            <td>
+                <div id="mapAdspots"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Query As Run" onclick="queryAsRun();" /></td>
+            <td>
+                <div id="queryAsRun"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Report As Run" onclick="reportAsRun();" /></td>
+            <td>
+                <div id="reportAsRun"></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign=top><input type="button" value="Query TraceAdSpots: BroadcasterA" onclick="queryTraceAdSpots('BroadcasterA');" /><br>
+                <input type="button" value="Query TraceAdSpots: Agency A" onclick="queryTraceAdSpots('AgencyA');" /><br>
+                <input type="button" value="Query TraceAdSpots: Advertiser A" onclick="queryTraceAdSpots('AdvertiserA');" /><br>
+                <input type="button" value="Query TraceAdSpots: Advertiser C" onclick="queryTraceAdSpots('AdvertiserC');" />
+            </td>
+            <td>
+                <div id="queryTraceAdSpots"></div>
+            </td>
         </tr>
     </table>
-    <br>
-    <table>
-        <tr>
-            <td><input type="button" value="Query TraceAdSpots: BroadcasterA" onclick="queryTraceAdSpots('BroadcasterA');" /></td>
-            <td><input type="button" value="Query TraceAdSpots: Agency A" onclick="queryTraceAdSpots('AgencyA');" /></td>
-            <td><input type="button" value="Query TraceAdSpots: Advertiser A" onclick="queryTraceAdSpots('AdvertiserA');" /></td>
-            <td><input type="button" value="Query TraceAdSpots: Advertiser C" onclick="queryTraceAdSpots('AdvertiserC');" /></td>
-
-        </tr>
-    </table>
-    <br>
-    <div id="result"></div>
-    <div id="releaseInventory"></div>
-    <br>
-    <div id="queryPlaceOrders"></div>
-    <br>
-    <div id="placeOrders"></div>
-    <br>
-    <div id="queryAdspotsToMap"></div>
-    <br>
-    <div id="mapAdspots"></div>
-    <br>
-    <div id="queryAsRun"></div>
-    <br>
-    <div id="reportAsRun"></div>
-    <br>
-    <div id="queryTraceAdSpots"></div>
 </body>
 
 </html>
