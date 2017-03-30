@@ -87,6 +87,14 @@ app.get('/', function (req, res) {
     });
 });
 
+app.post('/test', function (req, res) {
+     res.send("OK");
+});
+
+app.get('/test', function (req, res) {
+     res.send("OK");
+});
+
 app.post('/releaseInventory', function (req, res) {
     console.log("In ReleaseInventory!!");
     console.log("Input Params: " + JSON.stringify(req.body));

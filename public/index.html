@@ -118,13 +118,13 @@
         function mapAdspots() {
             var spots = [];
 
-            var spot1 = { uniqueAdspotId: "1000_1", campainName: "IPA" };
+            var spot1 = { uniqueAdspotId: "1000_1", campaignName: "IPA" };
             spots.push(JSON.stringify(spot1));
 
-            var spot2 = { uniqueAdspotId: "1000_2", campainName: "Family Sedan" };
+            var spot2 = { uniqueAdspotId: "1000_2", campaignName: "Family Sedan" };
             spots.push(JSON.stringify(spot2));
 
-            var spot3 = { uniqueAdspotId: "1000_5", campainName: "Great Soap" };
+            var spot3 = { uniqueAdspotId: "1000_5", campaignName: "Great Soap" };
 
             spots.push(JSON.stringify(spot3));
 
@@ -149,7 +149,7 @@
                 "actualGrp": "3.3",
                 "actualProgramName": "Crime Wave",
                 "actualDemographics": "Men 12 - 55",
-                "makupAdspotId": "1000_3"
+                "makupAdspotId": "1000_3 , 1000_4"
             };
             spots.push(JSON.stringify(spot1));
 
@@ -160,7 +160,7 @@
                 "actualDemographics": "Men 12 - 55",
                 "makupAdspotId": "1000_7"
             };
-
+            spots.push(JSON.stringify(spot2));
 
             var data = {
                 "broadcasterId": "BroadcasterA",

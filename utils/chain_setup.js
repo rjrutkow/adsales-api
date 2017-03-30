@@ -144,7 +144,8 @@ function deploy(enrolledUser, chaincode_path, cert_path, cb) {
 
     var deployRequest = {
         fcn: 'init',
-        args: ['a', '100'],
+        //args: ['a', '100'],
+        args: [],
         chaincodePath: chaincode_path,
         certificatePath: cert_path
     };
