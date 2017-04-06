@@ -10,6 +10,7 @@
  *******************************************************************************/
 // For logging
 var TAG = 'app.js:';
+var debug = false;
 
 // =====================================================================================================================
 // 												Node.js Setup
@@ -27,7 +28,7 @@ var https = require('https');
 var setup = require('./setup');
 var cors = require('cors');
 var fs = require('fs');
-
+var ready = "NOK";
 
 var cpChaincode = null;
 var url = require('url');
@@ -59,7 +60,7 @@ function setCustomCC(res, path) {
 }
 
 // Use a session to track how many requests we receive from a client (See below)
-app.use(session({ secret: 'Somethignsomething1234!test', resave: true, saveUninitialized: true }));
+// rly - app.use(session({ secret: 'Somethignsomething1234!test', resave: true, saveUninitialized: true }));
 
 // Enable CORS preflight across the board so browser will let the app make REST requests
 app.options('*', cors());
@@ -67,10 +68,12 @@ app.use(cors());
 
 // Attach useful things to the request
 app.use(function (req, res, next) {
-    console.log('----------------------------------------- incoming request -----------------------------------------');
+    if (debug) console.log('----------------------------------------- incoming request -----------------------------------------');
     // Create a bag for passing information back to the client
     req.bag = {};
-    req.session.count = req.session.count + 1;
+
+    //req.session.count = req.session.count + 1;
+
     req.bag.session = req.session;
     next();
 });
@@ -87,39 +90,43 @@ app.get('/', function (req, res) {
     });
 });
 
-app.post('/test', function (req, res) {
-     res.send("OK");
+app.post('/ready', function (req, res) {
+    res.send(ready);
 });
 
-app.get('/test', function (req, res) {
-     res.send("OK");
+app.get('/ready', function (req, res) {
+    res.send(ready);
 });
 
 app.post('/releaseInventory', function (req, res) {
-    console.log("In ReleaseInventory!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In ReleaseInventory!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
     var data = JSON.parse(req.body.data);
 
     var params = new Array();
     params.push(data.broadcasterId);
     params.push(data.lotId);
 
-    console.log("ad spot data: " + data.spots);
+    if (debug) console.log("ad spot data: " + data.spots);
     var spotData = data.spots;
     for (var i = 0; i < spotData.length; i++) {
         var adspotData = spotData[i];
         params.push(adspotData);
-        console.log(i + ") Adspot Data: " + adspotData);
+        if (debug) console.log(i + ") Adspot Data: " + adspotData);
     }
-
-    cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/releaseInventoryOLD', function (req, res) {
-    console.log("In ReleaseInventory OLD!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In ReleaseInventory OLD!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var params = new Array();
     params.push(req.body.broadcasterId);
@@ -138,142 +145,188 @@ app.post('/releaseInventoryOLD', function (req, res) {
         adspotData.bsrp = req.body.bsrp[i];
         adspotData.numberOfSpots = req.body.numberOfSpots[i];
         params.push(JSON.stringify(adspotData));
-        console.log("Adspot Data: " + JSON.stringify(adspotData));
+        if (debug) console.log("Adspot Data: " + JSON.stringify(adspotData));
     }
     //console.log(data);
-    cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.releaseInventory(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/queryPlaceOrders', function (req, res) {
-    console.log("In queryPlaceOrders!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In queryPlaceOrders!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.agencyId);
     params.push(data.broadcasterId);
 
-    cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/queryPlaceOrdersOLD', function (req, res) {
-    console.log("In queryPlaceOrders OLD!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In queryPlaceOrders OLD!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var params = new Array();
     params.push(req.body.agencyId);
     params.push(req.body.broadcasterId);
 
-    cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.queryPlaceOrders(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/placeOrders', function (req, res) {
-    console.log("In PlaceOrders!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In PlaceOrders!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.agencyId);
     params.push(data.broadcasterId);
 
-    console.log("ad spot data: " + data.spots);
+    if (debug) console.log("ad spot data: " + data.spots);
     var spotData = data.spots;
     for (var i = 0; i < spotData.length; i++) {
         var adspotData = spotData[i];
         params.push(adspotData);
-        console.log(i + ") Adspot Data: " + adspotData);
+        if (debug) console.log(i + ") Adspot Data: " + adspotData);
     }
 
-    cpChaincode.placeOrders(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.placeOrders(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/queryAdspotsToMap', function (req, res) {
-    console.log("In queryAdspotsToMap!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In queryAdspotsToMap!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.agencyId);
 
-    cpChaincode.queryAdspotsToMap(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.queryAdspotsToMap(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
+    
 });
 
 app.post('/mapAdspots', function (req, res) {
-    console.log("In mapAdspots!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In mapAdspots!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.agencyId);
 
-    console.log("ad spot data: " + data.spots);
+    if (debug) console.log("ad spot data: " + data.spots);
     var spotData = data.spots;
     for (var i = 0; i < spotData.length; i++) {
         var adspotData = spotData[i];
         params.push(adspotData);
-        console.log(i + ") Adspot Data: " + adspotData);
+        if (debug) console.log(i + ") Adspot Data: " + adspotData);
     }
 
-    cpChaincode.mapAdspots(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.mapAdspots(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/queryAsRun', function (req, res) {
-    console.log("In queryAsRun!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In queryAsRun!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.broadcasterId);
 
-    cpChaincode.queryAsRun(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.queryAsRun(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/reportAsRun', function (req, res) {
-    console.log("In reportAsRun!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In reportAsRun!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.broadcasterId);
 
-    console.log("ad spot data: " + data.spots);
+    if (debug) console.log("ad spot data: " + data.spots);
     var spotData = data.spots;
     for (var i = 0; i < spotData.length; i++) {
         var adspotData = spotData[i];
         params.push(adspotData);
-        console.log(i + ") Adspot Data: " + adspotData);
+        if (debug) console.log(i + ") Adspot Data: " + adspotData);
     }
 
-    cpChaincode.reportAsRun(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.reportAsRun(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 app.post('/queryTraceAdSpots', function (req, res) {
-    console.log("In queryTraceAdSpots!!");
-    console.log("Input Params: " + JSON.stringify(req.body));
+    if (debug) console.log("In queryTraceAdSpots!!");
+    if (debug) console.log("Input Params: " + JSON.stringify(req.body));
 
     var data = JSON.parse(req.body.data);
     var params = new Array();
     params.push(data.userId);
 
-    cpChaincode.queryTraceAdSpots(defaultDemoUser, params, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.queryTraceAdSpots(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 // Get a single participant's account information
@@ -283,16 +336,21 @@ app.get('/getBlockchainRecord', function (req, res) {
 
     console.log('recordKey: ', recordKey);
 
-    cpChaincode.getBlockchainRecord(defaultDemoUser, recordKey, function (e, data) {
-        cb_received_response(e, data, res);
-    });
+    if (cpChaincode != null) {
+        cpChaincode.getBlockchainRecord(defaultDemoUser, params, function (e, data) {
+            cb_received_response(e, data, res);
+        });
+    } else {
+        var data = {error: "chaincode not ready"};
+        cb_received_response(null, data, res);
+    }
 });
 
 function cb_received_response(e, data, res) {
     if (e != null) {
         console.log('Received this error when calling a chaincode function', e);
     } else {
-        console.log(JSON.stringify(data));
+        if (debug) console.log(JSON.stringify(data));
         if (res) {
             res.send(data);
         }
@@ -302,7 +360,7 @@ function cb_received_response(e, data, res) {
 
 // Callback function for invoking a chaincode function
 function cb_invoked_api(e, a) {
-    console.log('response: ', e, a);
+    if (debug) console.log('response: ', e, a);
 }
 
 // This router will serve up our pages and API calls.
@@ -467,6 +525,8 @@ chain_setup.setupChain(keyValStoreDir, users, peerURLs, caURL, certificate, cert
         cpChaincode = new chaincode_ops.CPChaincode(chain, chaincodeID);
 
         part2.setup(peers, cpChaincode);
+
+        ready = "OK";
         //setup_helpers(cpChaincode);
 
         // Now that the chain is ready, start the web socket server so clients can use the demo.

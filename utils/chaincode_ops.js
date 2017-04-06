@@ -17,6 +17,7 @@
 var TAG = 'chaincode_ops:';
 
 var async = require('async');
+var debug = true;
 
 /**
  * A helper object for interacting with the commercial paper chaincode.  Has functions for all of the query and invoke
@@ -40,8 +41,8 @@ function CPChaincode(chain, chaincodeID) {
 module.exports.CPChaincode = CPChaincode;
 
 CPChaincode.prototype.releaseInventory = function (uid, inputArgs, cb) {
-    console.log(TAG, '- releaseInventory uid: ', uid);
-    console.log(TAG, '- releaseInventory input args: ', JSON.stringify(inputArgs));
+    if (debug) console.log(TAG, '- releaseInventory uid: ', uid);
+    if (debug) console.log(TAG, '- releaseInventory input args: ', JSON.stringify(inputArgs));
     var releaseInventory = {
         chaincodeID: this.chaincodeID,
         fcn: 'releaseInventory',
@@ -55,13 +56,13 @@ CPChaincode.prototype.releaseInventory = function (uid, inputArgs, cb) {
         }
 
         //console.log(TAG, 'releaseInventory successfully:', result.toString());
-        console.log(TAG, 'releaseInventory successfully:', JSON.stringify(result));
+        if (debug) console.log(TAG, 'releaseInventory successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
 
 CPChaincode.prototype.queryPlaceOrders = function (enrollID, inputArgs, cb) {
-    console.log(TAG, 'queryPlaceOrders - chaincode_ops:', enrollID);
+    if (debug) console.log(TAG, 'queryPlaceOrders - chaincode_ops:', enrollID);
 
     var queryPlaceOrders = {
         chaincodeID: this.chaincodeID,
@@ -75,14 +76,14 @@ CPChaincode.prototype.queryPlaceOrders = function (enrollID, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'retrieved queryPlaceOrders information:', qResponse.toString());
+        if (debug) console.log(TAG, 'retrieved queryPlaceOrders information:', qResponse.toString());
         cb(null, qResponse.toString());
     });
 };
 
 CPChaincode.prototype.placeOrders = function (uid, inputArgs, cb) {
-    console.log(TAG, '- placeOrders uid: ', uid);
-    console.log(TAG, '- placeOrders input args: ', JSON.stringify(inputArgs));
+    if (debug) console.log(TAG, '- placeOrders uid: ', uid);
+    if (debug) console.log(TAG, '- placeOrders input args: ', JSON.stringify(inputArgs));
     var placeOrders = {
         chaincodeID: this.chaincodeID,
         fcn: 'placeOrders',
@@ -95,13 +96,13 @@ CPChaincode.prototype.placeOrders = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'placeOrders successfully:', JSON.stringify(result));
+        if (debug) console.log(TAG, 'placeOrders successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
 
 CPChaincode.prototype.queryAdspotsToMap = function (enrollID, inputArgs, cb) {
-    console.log(TAG, 'queryAdspotsToMap - chaincode_ops:', enrollID);
+    if (debug) console.log(TAG, 'queryAdspotsToMap - chaincode_ops:', enrollID);
 
     var queryAdspotsToMap = {
         chaincodeID: this.chaincodeID,
@@ -115,14 +116,14 @@ CPChaincode.prototype.queryAdspotsToMap = function (enrollID, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'retrieved queryAdspotsToMap information:', qResponse.toString());
+        if (debug) console.log(TAG, 'retrieved queryAdspotsToMap information:', qResponse.toString());
         cb(null, qResponse.toString());
     });
 };
 
 CPChaincode.prototype.mapAdspots = function (uid, inputArgs, cb) {
-    console.log(TAG, '- mapAdspots uid: ', uid);
-    console.log(TAG, '- mapAdspots input args: ', JSON.stringify(inputArgs));
+    if (debug) console.log(TAG, '- mapAdspots uid: ', uid);
+    if (debug) console.log(TAG, '- mapAdspots input args: ', JSON.stringify(inputArgs));
     var mapAdspots = {
         chaincodeID: this.chaincodeID,
         fcn: 'mapAdspots',
@@ -135,13 +136,13 @@ CPChaincode.prototype.mapAdspots = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'mapAdspots successfully:', JSON.stringify(result));
+        if (debug) console.log(TAG, 'mapAdspots successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
 
 CPChaincode.prototype.queryAsRun = function (enrollID, inputArgs, cb) {
-    console.log(TAG, 'queryAsRun - chaincode_ops:', enrollID);
+    if (debug) console.log(TAG, 'queryAsRun - chaincode_ops:', enrollID);
 
     var queryAsRun = {
         chaincodeID: this.chaincodeID,
@@ -155,15 +156,15 @@ CPChaincode.prototype.queryAsRun = function (enrollID, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'retrieved queryAsRun information:', qResponse.toString());
+        if (debug) console.log(TAG, 'retrieved queryAsRun information:', qResponse.toString());
         cb(null, qResponse.toString());
     });
 };
 
 
 CPChaincode.prototype.reportAsRun = function (uid, inputArgs, cb) {
-    console.log(TAG, '- reportAsRun uid: ', uid);
-    console.log(TAG, '- reportAsRun input args: ', JSON.stringify(inputArgs));
+    if (debug) console.log(TAG, '- reportAsRun uid: ', uid);
+    if (debug) console.log(TAG, '- reportAsRun input args: ', JSON.stringify(inputArgs));
     var reportAsRun = {
         chaincodeID: this.chaincodeID,
         fcn: 'reportAsRun',
@@ -176,14 +177,14 @@ CPChaincode.prototype.reportAsRun = function (uid, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'reportAsRun successfully:', JSON.stringify(result));
+        if (debug) console.log(TAG, 'reportAsRun successfully:', JSON.stringify(result));
         cb(null, result);
     });
 }
 
 
 CPChaincode.prototype.queryTraceAdSpots = function (enrollID, inputArgs, cb) {
-    console.log(TAG, 'queryTraceAdSpots - chaincode_ops:', enrollID);
+    if (debug) console.log(TAG, 'queryTraceAdSpots - chaincode_ops:', enrollID);
 
     var queryTraceAdSpots = {
         chaincodeID: this.chaincodeID,
@@ -197,7 +198,7 @@ CPChaincode.prototype.queryTraceAdSpots = function (enrollID, inputArgs, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'retrieved queryTraceAdSpots information:', qResponse.toString());
+        if (debug) console.log(TAG, 'retrieved queryTraceAdSpots information:', qResponse.toString());
         cb(null, qResponse.toString());
     });
 };
@@ -208,7 +209,7 @@ CPChaincode.prototype.queryTraceAdSpots = function (enrollID, inputArgs, cb) {
  * @param cb A callback of the form: function(error, commercial_papers)
  */
 CPChaincode.prototype.getBlockchainRecord = function (enrollID, recordKey, cb) {
-    console.log(TAG, 'getting commercial papers');
+    if (debug) console.log(TAG, 'getting commercial papers');
 
     // Accounts will be named after the enrolled users
     var getPapersRequest = {
@@ -224,7 +225,7 @@ CPChaincode.prototype.getBlockchainRecord = function (enrollID, recordKey, cb) {
             return cb(err);
         }
 
-        console.log(TAG, 'got papers');
+        if (debug) console.log(TAG, 'got papers');
         cb(null, papers.toString());
     });
 };
@@ -238,27 +239,58 @@ CPChaincode.prototype.getBlockchainRecord = function (enrollID, recordKey, cb) {
  */
 function invoke(chain, enrollID, requestBody, cb) {
 
+    doInvoke(chain, enrollID, requestBody, function (err, result) {
+        if (err) {
+            console.error(TAG, '1st try - failed invoke:', err);
+            doInvoke(chain, enrollID, requestBody, function (err2, result2) {
+                if (err2) {
+                    console.error(TAG, '2nd try - failed invoke:', err2);
+                    return cb(err2);
+                }
+
+                //console.log(TAG, 'releaseInventory successfully:', result.toString());
+                if (debug) console.log(TAG, '2nd try - invoke successfully:', JSON.stringify(result2));
+                cb(null, result2);
+            });
+        } else {
+
+            //console.log(TAG, 'releaseInventory successfully:', result.toString());
+            if (debug) console.log(TAG, '1st try - invoke successfully:', JSON.stringify(result));
+            cb(null, result);
+        }
+    });
+}
+
+/**
+ * Helper function for invoking chaincode using the hfc SDK.
+ * @param chain A hfc chain object representing our network.
+ * @param enrollID The enrollID for the user we should use to submit the invoke request.
+ * @param requestBody A valid hfc invoke request object.
+ * @param cb A callback of the form: function(error, invoke_result)
+ */
+function doInvoke(chain, enrollID, requestBody, cb) {
+
     // Submit the invoke transaction as the given user
-    console.log(TAG, 'Invoke transaction as:', enrollID);
+    if (debug) console.log(TAG, 'Invoke transaction as:', enrollID);
     chain.getMember(enrollID, function (getMemberError, usr) {
         if (getMemberError) {
-            console.error(TAG, 'failed to get ' + enrollID + ' member:', getMemberError.message);
+            if (debug) console.error(TAG, 'failed to get ' + enrollID + ' member:', getMemberError.message);
             if (cb) cb(getMemberError);
         } else {
-            console.log(TAG, 'successfully got member:', enrollID);
+            if (debug) console.log(TAG, 'successfully got member:', enrollID);
 
-            console.log(TAG, 'invoke body:', JSON.stringify(requestBody));
+            if (debug) console.log(TAG, 'invoke body:', JSON.stringify(requestBody));
             var invokeTx = usr.invoke(requestBody);
 
             // Print the invoke results
             invokeTx.on('completed', function (results) {
                 // Invoke transaction submitted successfully
-                console.log(TAG, 'Successfully completed invoke. Results:', results);
+                if (debug) console.log(TAG, 'Successfully completed invoke. Results:', results);
                 cb(null, results);
             });
             invokeTx.on('submitted', function (results) {
                 // Invoke transaction submitted successfully
-                console.log(TAG, 'invoke submitted');
+                if (debug) console.log(TAG, 'invoke submitted');
                 cb(null, results);
             });
             invokeTx.on('error', function (err) {
@@ -278,21 +310,48 @@ function invoke(chain, enrollID, requestBody, cb) {
  * @param cb A callback of the form: function(error, queried_data)
  */
 function query(chain, enrollID, requestBody, cb) {
+    doQuery(chain, enrollID, requestBody, function (err, qResponse) {
+        if (err) {
+            console.error(TAG, '1st try - failed to get query data:', err);
+            doQuery(chain, enrollID, requestBody, function (err2, qResponse2) {
+                if (err2) {
+                    console.error(TAG, '2nd try - failed to get query data:', err2);
+                    return cb(err2);
+                }
 
+                if (debug) console.log(TAG, '2nd try - retrieved query data:', qResponse2.toString());
+                cb(null, qResponse2.toString());
+            });
+        } else {
+
+            if (debug) console.log(TAG, '1st try - retrieved query data:', qResponse.toString());
+            cb(null, qResponse.toString());
+        }
+    });
+}
+
+/**
+ * Helper function for querying chaincode using the hfc SDK.
+ * @param chain A hfc chain object representing our network.
+ * @param enrollID The enrollID for the user we should use to submit the query request.
+ * @param requestBody A valid hfc query request object.
+ * @param cb A callback of the form: function(error, queried_data)
+ */
+function doQuery(chain, enrollID, requestBody, cb) {
     // Submit the invoke transaction as the given user
-    console.log(TAG, 'querying chaincode as:', enrollID);
+    if (debug) console.log(TAG, 'querying chaincode as:', enrollID);
     chain.getMember(enrollID, function (getMemberError, usr) {
         if (getMemberError) {
             console.error(TAG, 'failed to get ' + enrollID + ' member:', getMemberError.message);
             if (cb) cb(getMemberError);
         } else {
-            console.log(TAG, 'successfully got member:', enrollID);
+            if (debug) console.log(TAG, 'successfully got member:', enrollID);
 
-            console.log(TAG, 'query body:', JSON.stringify(requestBody));
+            if (debug) console.log(TAG, 'query body:', JSON.stringify(requestBody));
             var queryTx = usr.query(requestBody);
 
             queryTx.on('complete', function (results) {
-                console.log(TAG, 'Successfully completed query. Results:', results);
+                if (debug) console.log(TAG, 'Successfully completed query. Results:', results);
                 cb(null, results.result);
             });
             queryTx.on('error', function (err) {
