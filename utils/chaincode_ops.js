@@ -17,7 +17,7 @@
 var TAG = 'chaincode_ops:';
 
 var async = require('async');
-var debug = false;
+var debug = true;
 
 /**
  * A helper object for interacting with the commercial paper chaincode.  Has functions for all of the query and invoke
@@ -245,21 +245,28 @@ function invoke(chain, enrollID, requestBody, cb) {
             doInvoke(chain, enrollID, requestBody, function (err2, result2) {
                 if (err2) {
                     console.error(TAG, '2nd try - failed invoke:', err2);
-                    return cb(err2);
+                    doInvoke(chain, enrollID, requestBody, function (err3, result3) {
+                        if (err3) {
+                            console.error(TAG, '3rd try - failed invoke:', err3);
+                            return cb(err3);
+                        } else {
+                            if (debug) console.log(TAG, '3rd try - invoke successfully:', JSON.stringify(result3));
+                            cb(null, result3);
+                        }
+                    });
+                } else {
+                    if (debug) console.log(TAG, '2nd try - invoke successfully:', JSON.stringify(result2));
+                    cb(null, result2);
                 }
-
-                //console.log(TAG, 'releaseInventory successfully:', result.toString());
-                if (debug) console.log(TAG, '2nd try - invoke successfully:', JSON.stringify(result2));
-                cb(null, result2);
             });
         } else {
-
-            //console.log(TAG, 'releaseInventory successfully:', result.toString());
             if (debug) console.log(TAG, '1st try - invoke successfully:', JSON.stringify(result));
             cb(null, result);
         }
     });
 }
+
+
 
 /**
  * Helper function for invoking chaincode using the hfc SDK.
@@ -316,19 +323,28 @@ function query(chain, enrollID, requestBody, cb) {
             doQuery(chain, enrollID, requestBody, function (err2, qResponse2) {
                 if (err2) {
                     console.error(TAG, '2nd try - failed to get query data:', err2);
-                    return cb(err2);
+                    doQuery(chain, enrollID, requestBody, function (err3, qResponse3) {
+                        if (err3) {
+                            console.error(TAG, '3rd try - failed to get query data:', err3);
+                            return cb(err3);
+                        } else {
+                            if (debug) console.log(TAG, '3nd try - retrieved query data:', qResponse3.toString());
+                            cb(null, qResponse3.toString());
+                        }
+                    });
+                } else {
+                    if (debug) console.log(TAG, '2nd try - retrieved query data:', qResponse2.toString());
+                    cb(null, qResponse2.toString());
                 }
-
-                if (debug) console.log(TAG, '2nd try - retrieved query data:', qResponse2.toString());
-                cb(null, qResponse2.toString());
             });
         } else {
-
             if (debug) console.log(TAG, '1st try - retrieved query data:', qResponse.toString());
             cb(null, qResponse.toString());
         }
     });
 }
+
+
 
 /**
  * Helper function for querying chaincode using the hfc SDK.
