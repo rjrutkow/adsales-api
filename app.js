@@ -10,7 +10,7 @@
  *******************************************************************************/
 // For logging
 var TAG = 'app.js:';
-var debug = false;
+var debug = true;
 
 // =====================================================================================================================
 // 												Node.js Setup
@@ -208,8 +208,12 @@ app.post('/placeOrders', function (req, res) {
     var spotData = data.spots;
     for (var i = 0; i < spotData.length; i++) {
         var adspotData = spotData[i];
+        adspotData = JSON.parse(adspotData);
+        adspotData.numberOfSpots = adspotData.numberOfSpotsToPurchase;
+        delete adspotData.numberOfSpotsToPurchase;
+        adspotData = JSON.stringify(adspotData);
         params.push(adspotData);
-        if (debug) console.log(i + ") Adspot Data: " + adspotData);
+        if (debug) console.log(i + ") Pushing - Adspot Data: " + adspotData);
     }
 
     if (cpChaincode != null) {

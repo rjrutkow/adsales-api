@@ -17,7 +17,7 @@
 var TAG = 'chaincode_ops:';
 
 var async = require('async');
-var debug = true;
+var debug = false;
 
 /**
  * A helper object for interacting with the commercial paper chaincode.  Has functions for all of the query and invoke
