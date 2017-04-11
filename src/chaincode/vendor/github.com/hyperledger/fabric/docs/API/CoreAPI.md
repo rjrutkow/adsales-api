@@ -596,7 +596,7 @@ Hold on to your hats everyone, this application is going to demonstrate transfer
 
 For more inforation on the IBM Blockchain marbles demo, set-up, and instructions, please visit [this page](https://github.com/IBM-Blockchain/marbles).
 
-### [Commercial Paper Demo Application](https://github.com/IBM-Blockchain/cp-web)
+### [Commercial Paper Demo Application](https://github.com/xrayyee/adsales-web)
 
 * Demonstrates an alternative way of interfacing with a peer node from a Node.js app.
 * Demonstrates deploying a Blockchain application as a Bluemix service.
@@ -608,4 +608,4 @@ This application is a demonstration of how a commercial paper trading network mi
 * A Trade Center for buying and selling existing trades.
 * A special interface just for auditors of the network to examine trades.
 
-For more inforation on the IBM Blockchain commercial paper demo, set-up, and instructions, please visit [this page](https://github.com/IBM-Blockchain/cp-web).
+For more inforation on the IBM Blockchain commercial paper demo, set-up, and instructions, please visit [this page](https://github.com/xrayyee/adsales-web).

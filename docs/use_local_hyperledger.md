@@ -26,7 +26,7 @@ It's easy to stand up a local hyperledger network using docker compose.
 The network is all setup. 
 
 Next we need to **copy the peer data and pass it to our demo node.js application**.
-This is done by editing the `mycreds.json` file which lives in the root of the cp-web app.
+This is done by editing the `mycreds.json` file which lives in the root of the adsales-web app.
 
 All we must do is edit the file with information about your network.
 
@@ -90,11 +90,11 @@ Remove any comments in your json file
 It should be the outter most field like in the sample above. 
 If its not there you need to add it such that `peers`, `ca` and `users` are inside `credentials`.
 
-Note that only one user (Registrar) is added to the `users` section because cp-web allows you to create new users. 
+Note that only one user (Registrar) is added to the `users` section because adsales-web allows you to create new users. 
 However, you are welcome to add new users by referring to [Fabric's documentation](https://github.com/hyperledger/fabric/blob/v0.6/membersrvc/membersrvc.yaml)
 
 You can omit the field `api_port_tls` if the network does not support TLS. 
 The default docker-compose example does not support TLS. 
-Once you have edited `mycreds.json` you are ready to run cp-web. 
+Once you have edited `mycreds.json` you are ready to run adsales-web. 
 
-1. Continue where you left off in [cp-web](../README.md).
+1. Continue where you left off in [adsales-web](../README.md).
