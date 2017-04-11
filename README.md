@@ -1,13 +1,13 @@
-# Commercial Paper Demo
+# Adsales API Demo
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/xrayyee/adsales-api.git)
 
 ## Description
-This application is a demonstration of how a commercial paper trading network might be implemented
+This application is a demonstration of how ad sales might be implemented
 on IBM Blockchain.  The components of the demo are:
 
 * An interface for creating new users on the network.
-* An interface for creating new commercial papers to trade.
+* An interface for creating new ad spots to sell.
 * A Trade Center for buying and selling existing trades.
 * A special interface just for auditors of the network to examine trades
 
@@ -104,14 +104,12 @@ DEBUG=hfc GRPC_TRACE=all gulp
 
 
 ## Using the Demo
-1. Register some users using the registration form on the login page.
-2. Save the credentials that are created for the users you register.  They appear just above the
-registration form.
-3. Use the credentials to log in to the application.  The UI you see will be determined by the role
-that was assigned to each user.
-4. Open the 'CREATE' tab to create new trades.
-5. Open the 'TRADE' tab to participate in your commercial paper trading network.
-6. Open the 'AUDIT' tab to view all of the trades on the network.
+1. 
+2.  
+3.  
+4.  
+5.  
+6.  
 
 ## Notes on the Key Value Store
 
