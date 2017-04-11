@@ -1,6 +1,6 @@
 # Commercial Paper Demo
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/xrayyee/adsales-web.git)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/xrayyee/adsales-api.git)
 
 ## Description
 This application is a demonstration of how a commercial paper trading network might be implemented
@@ -189,8 +189,8 @@ chain_setup.js Failed to deploy chaincode: EventTransactionError {
   error:
    Error: Error creating deployment archive [/tmp/deployment-package.tar.gz]: Error: Error on fs.createWriteStream
        at Error (native)
-       at C:\Users\IBM_ADMIN\Documents\obc\git\demos\adsales-web\node_modules\hfc\lib\hfc.js:1411:31
-       at WriteStream.<anonymous> (C:\Users\IBM_ADMIN\Documents\obc\git\demos\adsales-web\node_modules\hfc\lib\sdk_util.js:163:16)
+       at C:\Users\IBM_ADMIN\Documents\obc\git\demos\adsales-api\node_modules\hfc\lib\hfc.js:1411:31
+       at WriteStream.<anonymous> (C:\Users\IBM_ADMIN\Documents\obc\git\demos\adsales-api\node_modules\hfc\lib\sdk_util.js:163:16)
        at emitOne (events.js:101:20)
        at WriteStream.emit (events.js:188:7)
        at WriteStream.<anonymous> (fs.js:2109:12)

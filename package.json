@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xrayyee/adsales-web.git"
+    "url": "https://github.com/xrayyee/adsales-api.git"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
