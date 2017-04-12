@@ -409,12 +409,13 @@ func (t *SimpleChaincode) placeOrders(stub shim.ChaincodeStubInterface, args []s
 					AdSpotObj.AdvertiserId = placeOrdersObj.AdvertiserId
 					AdSpotObj.AdContractId, _ = strconv.Atoi(placeOrdersObj.AdContractId)
 					AdSpotObj.OrderNumber, _ = strconv.Atoi(placeOrdersObj.OrderNumber)
-					AdSpotObj.ContractResults = "Purchased by: " + agencyId + " for: " + placeOrdersObj.AdvertiserId // rly
 
 					//Create Timestamp based on current Time
 					var placeOrderDate time.Time = time.Now().AddDate(0, 0, 2)
 					placeOrderDateStr := placeOrderDate.Format(time.RFC822)
 					AdSpotObj.OrderDate, _ = time.Parse(time.RFC822, placeOrderDateStr)
+
+					AdSpotObj.ContractResults = AdSpotObj.OrderDate.String() + ", Purchased by: " + agencyId + " for: " + placeOrdersObj.AdvertiserId // rly
 
 					t.putAdspot(stub, AdSpotObj)
 
@@ -583,12 +584,12 @@ func (t *SimpleChaincode) mapAdspots(stub shim.ChaincodeStubInterface, args []st
 			if AdSpotObj.UniqueAdspotId == mapAdspotsObj.UniqueAdspotId {
 				AdSpotObj.CampaignName = mapAdspotsObj.CampaignName
 
-				AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Mapped campaign: " + mapAdspotsObj.CampaignName // rly
-
 				//Create Timestamp based on current Time
 				var adAssignedDate time.Time = time.Now().AddDate(0, 0, 4)
 				adAssignedStr := adAssignedDate.Format(time.RFC822)
 				AdSpotObj.AdAssignedDate, _ = time.Parse(time.RFC822, adAssignedStr)
+
+				AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AdAssignedDate.String() + ", Mapped campaign: " + mapAdspotsObj.CampaignName // rly
 
 				fmt.Printf("Unique Adspot Id Matched! Adspot Obj is:", AdSpotObj)
 				t.putAdspot(stub, AdSpotObj)
@@ -695,7 +696,7 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 						//Flag the Adspot as a Makeup Adspot
 						makeupAdspot, _ := t.getAdspot(stub, trimmedID)
 						makeupAdspot.AdspotId = isMakeup
-						makeupAdspot.ContractResults = "Makeup for spot: " + AdSpotObj.UniqueAdspotId // rly
+						makeupAdspot.ContractResults = "Spot: " + makeupAdspot.UniqueAdspotId + " is makeup for spot: " + AdSpotObj.UniqueAdspotId // rly
 						t.putAdspot(stub, makeupAdspot)
 					}
 
@@ -719,20 +720,20 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 					if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
 						if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
 							fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Completed Successfully" // rly
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Completed Successfully" // rly
 						} else {
 							fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Demographics requirements not met" // rly
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Demographics requirements not met" // rly
 							//LAUNCH AD RESCHEDULER
 						}
 					} else {
 						fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
-						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|GRP requirements not met" // rly
+						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", GRP requirements not met" // rly
 						//LAUNCH AD RESCHEDULER
 					}
 				} else {
 					fmt.Println("Program Name not met! Setting ContractResults to Program message")
-					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Program requirements not met" // rly
+					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Program requirements not met" // rly
 					//LAUNCH AD RESCHEDULER
 				}
 
