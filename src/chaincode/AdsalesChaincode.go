@@ -409,6 +409,7 @@ func (t *SimpleChaincode) placeOrders(stub shim.ChaincodeStubInterface, args []s
 					AdSpotObj.AdvertiserId = placeOrdersObj.AdvertiserId
 					AdSpotObj.AdContractId, _ = strconv.Atoi(placeOrdersObj.AdContractId)
 					AdSpotObj.OrderNumber, _ = strconv.Atoi(placeOrdersObj.OrderNumber)
+					AdSpotObj.ContractResults = "Purchased by: " + agencyId + " for: " + placeOrdersObj.AdvertiserId // rly
 
 					//Create Timestamp based on current Time
 					var placeOrderDate time.Time = time.Now().AddDate(0, 0, 2)
@@ -581,6 +582,8 @@ func (t *SimpleChaincode) mapAdspots(stub shim.ChaincodeStubInterface, args []st
 
 			if AdSpotObj.UniqueAdspotId == mapAdspotsObj.UniqueAdspotId {
 				AdSpotObj.CampaignName = mapAdspotsObj.CampaignName
+
+				AdSpotObj.ContractResults = "Mapped campaign: " + mapAdspotsObj.CampaignName // rly
 
 				//Create Timestamp based on current Time
 				var adAssignedDate time.Time = time.Now().AddDate(0, 0, 4)
