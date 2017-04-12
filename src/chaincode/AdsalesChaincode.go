@@ -695,6 +695,7 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 						//Flag the Adspot as a Makeup Adspot
 						makeupAdspot, _ := t.getAdspot(stub, trimmedID)
 						makeupAdspot.AdspotId = isMakeup
+						makeupAdspot.ContractResults = "Makeup for spot: " + AdSpotObj.UniqueAdspotId // rly
 						t.putAdspot(stub, makeupAdspot)
 					}
 
