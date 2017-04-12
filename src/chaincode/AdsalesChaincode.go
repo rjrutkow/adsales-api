@@ -583,7 +583,7 @@ func (t *SimpleChaincode) mapAdspots(stub shim.ChaincodeStubInterface, args []st
 			if AdSpotObj.UniqueAdspotId == mapAdspotsObj.UniqueAdspotId {
 				AdSpotObj.CampaignName = mapAdspotsObj.CampaignName
 
-				AdSpotObj.ContractResults = "Mapped campaign: " + mapAdspotsObj.CampaignName // rly
+				AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Mapped campaign: " + mapAdspotsObj.CampaignName // rly
 
 				//Create Timestamp based on current Time
 				var adAssignedDate time.Time = time.Now().AddDate(0, 0, 4)
@@ -718,20 +718,20 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 					if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
 						if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
 							fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
-							AdSpotObj.ContractResults = "Completed Successfully"
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Completed Successfully" // rly
 						} else {
 							fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
-							AdSpotObj.ContractResults = "Demographics requirements not met"
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Demographics requirements not met" // rly
 							//LAUNCH AD RESCHEDULER
 						}
 					} else {
 						fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
-						AdSpotObj.ContractResults = "GRP requirements not met"
+						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|GRP requirements not met" // rly
 						//LAUNCH AD RESCHEDULER
 					}
 				} else {
 					fmt.Println("Program Name not met! Setting ContractResults to Program message")
-					AdSpotObj.ContractResults = "Program requirements not met"
+					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|Program requirements not met" // rly
 					//LAUNCH AD RESCHEDULER
 				}
 
