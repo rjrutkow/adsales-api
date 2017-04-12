@@ -716,25 +716,27 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 				fmt.Printf("Unique Adspot Id Matched! Adspot Obj is:", AdSpotObj)
 
 				// Basic "True-Up" Logic
-				if AdSpotObj.ActualProgramName == AdSpotObj.ProgramName {
-					if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
-						if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
-							fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Completed Successfully." // rly
+				if AdSpotObj.AdContractId != noValue {
+					if AdSpotObj.ActualProgramName == AdSpotObj.ProgramName {
+						if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
+							if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
+								fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
+								AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Completed Successfully." // rly
+							} else {
+								fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
+								AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Demographics requirements not met." // rly
+								//LAUNCH AD RESCHEDULER
+							}
 						} else {
-							fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Demographics requirements not met." // rly
+							fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", GRP requirements not met." // rly
 							//LAUNCH AD RESCHEDULER
 						}
 					} else {
-						fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
-						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", GRP requirements not met." // rly
+						fmt.Println("Program Name not met! Setting ContractResults to Program message")
+						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Program requirements not met." // rly
 						//LAUNCH AD RESCHEDULER
 					}
-				} else {
-					fmt.Println("Program Name not met! Setting ContractResults to Program message")
-					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Program requirements not met." // rly
-					//LAUNCH AD RESCHEDULER
 				}
 
 				t.putAdspot(stub, AdSpotObj)
