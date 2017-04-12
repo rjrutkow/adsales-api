@@ -415,7 +415,7 @@ func (t *SimpleChaincode) placeOrders(stub shim.ChaincodeStubInterface, args []s
 					placeOrderDateStr := placeOrderDate.Format(time.RFC822)
 					AdSpotObj.OrderDate, _ = time.Parse(time.RFC822, placeOrderDateStr)
 
-					AdSpotObj.ContractResults = AdSpotObj.OrderDate.String() + ", Purchased by: " + agencyId + " for: " + placeOrdersObj.AdvertiserId // rly
+					AdSpotObj.ContractResults = AdSpotObj.OrderDate.String() + ", Purchased by: " + agencyId + " for: " + placeOrdersObj.AdvertiserId + "." // rly
 
 					t.putAdspot(stub, AdSpotObj)
 
@@ -589,7 +589,7 @@ func (t *SimpleChaincode) mapAdspots(stub shim.ChaincodeStubInterface, args []st
 				adAssignedStr := adAssignedDate.Format(time.RFC822)
 				AdSpotObj.AdAssignedDate, _ = time.Parse(time.RFC822, adAssignedStr)
 
-				AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AdAssignedDate.String() + ", Mapped campaign: " + mapAdspotsObj.CampaignName // rly
+				AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AdAssignedDate.String() + ", Mapped campaign: " + mapAdspotsObj.CampaignName + "." // rly
 
 				fmt.Printf("Unique Adspot Id Matched! Adspot Obj is:", AdSpotObj)
 				t.putAdspot(stub, AdSpotObj)
