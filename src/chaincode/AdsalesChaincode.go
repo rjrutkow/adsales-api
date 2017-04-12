@@ -696,7 +696,7 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 						//Flag the Adspot as a Makeup Adspot
 						makeupAdspot, _ := t.getAdspot(stub, trimmedID)
 						makeupAdspot.AdspotId = isMakeup
-						makeupAdspot.ContractResults = "Spot: " + makeupAdspot.UniqueAdspotId + " is makeup for spot: " + AdSpotObj.UniqueAdspotId // rly
+						makeupAdspot.ContractResults = "Spot: " + makeupAdspot.UniqueAdspotId + " is makeup for spot: " + AdSpotObj.UniqueAdspotId + "." // rly
 						t.putAdspot(stub, makeupAdspot)
 					}
 
@@ -720,20 +720,20 @@ func (t *SimpleChaincode) reportAsRun(stub shim.ChaincodeStubInterface, args []s
 					if AdSpotObj.ActualGrp >= AdSpotObj.TargetGrp {
 						if AdSpotObj.ActualDemographics == AdSpotObj.TargetDemographics {
 							fmt.Println("All Contract Terms Met. Setting ContractResults to Completed")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Completed Successfully" // rly
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Completed Successfully." // rly
 						} else {
 							fmt.Println("Demographics not met! Setting ContractResults to Demogrpahics message")
-							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Demographics requirements not met" // rly
+							AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Demographics requirements not met." // rly
 							//LAUNCH AD RESCHEDULER
 						}
 					} else {
 						fmt.Println("Target GRP not met! Setting ContractResults to GRP message")
-						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", GRP requirements not met" // rly
+						AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", GRP requirements not met." // rly
 						//LAUNCH AD RESCHEDULER
 					}
 				} else {
 					fmt.Println("Program Name not met! Setting ContractResults to Program message")
-					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Program requirements not met" // rly
+					AdSpotObj.ContractResults = AdSpotObj.ContractResults + "|" + AdSpotObj.AiredDate.String() + ", Program requirements not met." // rly
 					//LAUNCH AD RESCHEDULER
 				}
 
