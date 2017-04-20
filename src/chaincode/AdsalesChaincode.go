@@ -809,9 +809,10 @@ func (t *SimpleChaincode) queryTraceAdSpots(stub shim.ChaincodeStubInterface, ar
 			ThisQueryTraceAdspotsReturnStruct.MakeupAdspotData = MakeupAdspotData
 		}
 
-		if ThisQueryTraceAdspotsReturnStruct.AdspotId != isMakeup {
-			adspotResultsArray = append(adspotResultsArray, ThisQueryTraceAdspotsReturnStruct)
-		}
+		// rly - decided to list makup spots
+		//if ThisQueryTraceAdspotsReturnStruct.AdspotId != isMakeup {
+		adspotResultsArray = append(adspotResultsArray, ThisQueryTraceAdspotsReturnStruct)
+		//}
 
 	}
 	jsonAsBytes, err := json.Marshal(adspotResultsArray)
